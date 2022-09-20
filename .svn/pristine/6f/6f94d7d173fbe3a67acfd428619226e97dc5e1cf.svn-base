@@ -1,0 +1,202 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+@*<link href="~/Content/js/simditor/css/simditor.css" rel="stylesheet" />
+<script src="~/Content/js/simditor/js/module.min.js"></script>
+<script src="~/Content/js/simditor/js/hotkeys.min.js"></script>
+<script src="~/Content/js/simditor/js/simditor.min.js"></script>*@
+<script>
+    $(function () {
+        $('#layout').layout();
+        treeView();
+        gridList();
+    });
+    function treeView() {
+        $("#itemTree").treeview({
+            url: "/ExceptionManage/ExceptionType/GetTreeJson",
+            onnodeclick: function (item) {                
+                $("#txt_keyword").val('');
+                $('#btn_search').trigger("click");
+            }
+        });
+    }
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            height: $(window).height() - 96,
+            colModel: [
+                { label: "主键", name: "F_Id", hidden: true, key: true },
+                {
+                    label: '标题', name: 'F_ItemName', width: 350, align: 'left',
+                    formatter: function (value, row, index) {
+                       // console.log(row);
+                        return '<a href="javascript:btn_details_href(\'' + row.rowId + '\')">' + value + '</a>';
+                    }
+
+                },
+                { label: '编号', name: 'F_ItemCode', width: 90, align: 'left' },
+                {
+                    label: "默认", name: "F_IsDefault", width: 60, align: "center",
+                    formatter: function (cellvalue) {
+                        return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                },
+                {
+                    label: '创建时间', name: 'F_CreatorTime', width: 120, align: 'left',
+                    formatter: "date", formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }
+                },
+                {
+                    label: "有效", name: "F_EnabledMark", width: 80, align: "center",
+                    formatter: function (cellvalue) {
+                        return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                },
+                {
+                    label: "操作", name: "F_Description", index: "F_Description", width: 200, align: "centor", sortable: false,
+                    formatter: function (value, row, index) {                  
+                        return '<a href="javascript:btn_details_href(\'' + row.rowId + '\')">详情</a>';
+                    }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'F_SortCode desc',
+            viewrecords: true
+        });
+        $("#btn_search").click(function () {
+            console.log($("#itemTree").getCurrentNode().id);
+            $gridList.jqGrid('setGridParam', {
+                url: "/ExceptionManage/ExceptionPackage/GetGridJson",
+                postData: { itemId: $("#itemTree").getCurrentNode().id, keyword: $("#txt_keyword").val() },
+            }).trigger('reloadGrid');
+        });
+    }
+    function btn_add() {
+        var itemId = $("#itemTree").getCurrentNode().id;
+        var itemName = $("#itemTree").getCurrentNode().text;
+        if (!itemId) {
+            return false;
+        }
+        $.modalOpen({
+            id: "Form",
+            title: itemName + " 》新增异常",
+            url: "/ExceptionManage/ExceptionPackage/Form?itemId=" + itemId,
+            width: "100%",
+            height: "100%",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            },   
+        });
+    }
+    function btn_edit() {
+        var itemName = $("#itemTree").getCurrentNode().text;
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+        $.modalOpen({
+            id: "Form",
+            title: itemName + " 》修改异常",
+            url: "/ExceptionManage/ExceptionPackage/Form?keyValue=" + keyValue,
+            width: "100%",
+            height: "100%",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+    function btn_delete() {
+        $.deleteForm({
+            url: "/ExceptionManage/ExceptionPackage/DeleteForm",
+            param: { keyValue: $("#gridList").jqGridRowValue().F_Id },
+            success: function () {
+                $("#gridList").resetSelection();
+                $("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    function btn_details() {
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+        $.modalOpen({
+            id: "Details",
+            title: "查看异常详情",
+            url: "/ExceptionManage/ExceptionPackage/Details?keyValue=" + keyValue,
+            width: "100%",
+            height: "100%",
+            //maxmin: false,
+            //btn: null,
+       });
+    }
+   function btn_details_href(f_id) {  
+     $.modalOpen({
+            id: "ContentDetails",
+            title: "查看异常详情",
+            url: "/ExceptionManage/ExceptionPackage/ContentDetails?keyValue=" + f_id,            
+            width: "100%",
+            height: "100%",
+            btn: null,
+            //maxmin:false,
+            //fix: true,      
+      });
+       
+    }
+    
+    function btn_itemstype() {
+        $.modalOpen({
+            id: "ItemsType",
+            title: "区域分类",
+            url: "/ExceptionManage/ExceptionType/Index",
+            width: "800px",
+            height: "550px",
+            maxmin: false,
+            btn: null,
+        });
+    }
+</script>
+<div class="ui-layout" id="layout" style="height: 100%; width: 100%;">
+    <div class="ui-layout-west">
+        <div id="itemTree"></div>
+    </div>
+    <div class="ui-layout-center">
+        <div class="topPanel">
+            <div class="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+                </div>
+                <div class="btn-group">
+                    <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>新建异常</a>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a id="NF-itemstype" authorize="yes" onclick="btn_itemstype()" href="javascript:void()">区域管理</a></li>
+                    </ul>
+                </div>
+                <div class="operate">
+                    <ul class="nav nav-pills">
+                        <li class="first">已选中<span>1</span>项</li>
+                        <li><a id="NF-edit" authorize="yes" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改异常</a></li>
+                        <li><a id="NF-delete" authorize="yes" onclick="btn_delete()"><i class="fa fa-trash-o"></i>删除异常</a></li>
+                        <li><a id="NF-Details" authorize="yes" onclick="btn_details()"><i class="fa fa-search-plus"></i>查看异常</a></li>
+                    </ul>
+                    <a href="javascript:;" class="close"></a>
+                </div>
+                <script>$('.toolbar').authorizeButton()</script>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <input id="txt_keyword" type="text" class="form-control" placeholder="查询前请选择左侧具体的分类" style="width: 200px;">
+                                <span class="input-group-btn">
+                                    <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="gridPanel">
+            <table id="gridList"></table>
+        </div>
+    </div>
+    
+</div>
+<div id="gridPager"></div>

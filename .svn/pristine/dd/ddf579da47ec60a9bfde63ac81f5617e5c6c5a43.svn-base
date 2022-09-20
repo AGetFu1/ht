@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+ 
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.all.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/lang/zh-cn/zh-cn.js"></script>
+ 
+<script>
+    var keyValue = $.request("keyValue");
+    var itemId = $.request("itemId");
+    var ue;
+
+    $(function () {
+        ue = UE.getEditor('F_Description');
+        if (!!keyValue) {
+            $.ajax({
+                url: "/ExceptionManage/ExceptionPackage/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var postData = $("#form1").formSerialize();
+        postData["F_ItemId"] = itemId;
+        postData["F_Description"] = ue.getContent();
+        $.submitForm({
+            url: "/ExceptionManage/ExceptionPackage/SubmitForm?keyValue=" + keyValue,
+            param: postData,
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+</script>
+
+<form id="form1">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">标题</th>
+                <td class="formValue">
+                    <input id="F_ItemName" name="F_ItemName" type="text" class="form-control required" placeholder="请输入名称" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">编号</th>
+                <td class="formValue">
+                    <input id="F_ItemCode" name="F_ItemCode" type="text" class="form-control required" placeholder="请输入编号" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle" style="height: 35px;">选项</th>
+                <td class="formValue" style="padding-top: 1px;">
+                    <div class="ckbox">
+                        <input id="F_IsDefault" name="F_IsDefault" type="checkbox"><label for="F_IsDefault">默认</label>
+                    </div>
+                    <div class="ckbox">
+                        <input id="F_EnabledMark" name="F_EnabledMark" type="checkbox" checked="checked"><label for="F_EnabledMark">有效</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle" valign="top" style="padding-top: 5px;">
+                    详情
+                </th>
+                <td class="formValue">
+                    <div style="width:auto">
+                        <script id="F_Description" name="F_Description" type="text/plain"></script>
+                    </div>
+                    @*<textarea id="F_Description" name="F_Description" class="form-control" style="height: 60px;"></textarea>*@           
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>

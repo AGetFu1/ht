@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Shift";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<!DOCTYPE>
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+<link rel="stylesheet" href="~/Content/ElementUI/element-ui.css" />
+<script src="~/Scripts/ElementUI/element-ui.js"></script>
+
+<el-form-item >
+    <form id="form1">
+    <div id="app" style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">组别</th>
+                <td class="formValue">
+                    <select id="F_Team" v-model:value='team' v-on:change="change" class="form-control required">
+                        <option value="">==请选择组别==</option>
+                        <option value="减划组">减划组</option>
+                        <option value="上芯组">上芯组</option>
+                        <option value="压焊组">压焊组</option>
+                        <option value="切割组">切割组</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">姓名</th>
+                <td class="formValue">
+                    <select id="F_Text"  class="form-control required">
+                        <option v-for="item in getinWeekModel">{{item.F_Name}}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">主题</th>
+                <td class="formValue">
+                    <select id="F_Title" name="F_Title" class="form-control required">
+                        <option value="">==请选择==</option>
+                        <option value="周内值班">周内值班</option>
+                        <option value="周末值班">周末值班</option>
+                        @*<option value="假日值班">假日值班</option>*@
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">开始日期</th>
+                <td class="formValue">
+                    <input id="F_Start" name="F_Start" autocomplete="off" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" />
+                    @*<input id="F_Start" name="F_Start" type="text" class="form-control required" placeholder="开始时间" />*@
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">结束日期</th>
+                <td class="formValue">
+                    <input id="F_End" name="F_End" autocomplete="off" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" />
+                    @*<input id="F_Start" name="F_Start" type="text" class="form-control required" placeholder="开始时间" />*@
+                </td>
+            </tr>
+        </table>
+    </div>
+   </form>
+</el-form-item>
+<script type="text/javascript">
+    var keyValue = $.request("keyValue");
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/ShiftManage/Calendarzz1/Scheduling?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    Vue.config.productionTip = false;
+    new Vue({
+        el: '#app',
+        data: {
+            team: ["PWS&B2B组", "设备联网组", "网络维护组"],
+            getinWeekModel: [],
+            aitem:"",
+        },
+        created: function () {
+            this.GetDetails();
+            //this.GetShiftOrder();
+        },
+        methods: {
+            change(e) {
+                console.log(e.target.value)
+                this.aitem = e.target.value;
+                var _self = this;
+                _self.$http.get("/ShiftManage/ShiftTable/GetGridzz1Json", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+                        console.log(response.body)
+                        this.getinWeekModel = response.body;
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            },
+            GetDetails: function (val) {
+                var _self = this;
+
+                _self.$http.get("/ShiftManage/ShiftTable/GetGridzz1Json", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+
+                        this.getinWeekModel = JSON.parse(response.bodyText);
+
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            }
+            
+        }      
+    })
+    
+</script>

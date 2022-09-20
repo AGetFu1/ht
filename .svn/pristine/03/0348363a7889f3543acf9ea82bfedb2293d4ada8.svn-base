@@ -1,0 +1,322 @@
+﻿@{
+    ViewBag.Title = "UpLoadFile";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="~/Content/layui/css/layui.css" tppabs="http://res.layui.com/layui/dist/css/layui.css" media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/Content/layui/layui.js"></script>
+</head>
+<script>
+    //var keyValue = $.request("keyValue");
+    //var itemId = $.request("itemId");
+    //var ue;
+
+    //$(function () {
+    //    ue = UE.getEditor('F_Description');
+    //    if (!!keyValue) {
+    //        $.ajax({
+    //            url: "/ShiftManage/FileListTable/GetGridJson",
+    //            data: { keyValue: keyValue },
+    //            dataType: "json",
+    //            async: true,
+    //            success: function (data) {
+    //                top.frames[data].submitForm();
+    //            }
+    //        });
+
+    //    }
+    //});
+    @*function submitForm() {
+        if (!$("#form1").formSerialize(data)) {
+            return false;
+        }
+            var name="@EMS.Code.OperatorProvider.Provider.GetCurrent().UserName";
+            var postData = $("#form1").formSerialize();
+            postData["F_ItemId"] = itemId;
+            postData["F_Description"] = ue.getContent();
+            $.submitForm({
+                url: "/ShiftManage/FileListTable/SubmitForm?keyValue=" + keyValue,
+                param: postData,
+                success: function () {
+                    $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }*@
+
+
+
+    $(function () {
+        gridList();
+    })
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/ShiftManage/FileListTable/GetGridJson",
+            height: $(window).height() - 128,
+            colModel: [
+                { label: '主键', name: 'F_Id', hidden: true },
+                { label: '上传人', name: 'F_UseName', width: 200, align: 'left' },
+                { label: '文件名', name: 'F_FileName', width: 350, align: 'left' },
+                { label: '文件类型', name: 'F_Type', width: 350, align: 'left' },
+                { label: '工序', name: 'F_GongXv', width: 150, align: 'left' },
+                { label: '上传日期', name: 'F_Date', width: 230, align: 'left' },
+                {
+                    label: "操作", name: "F_Description", index: "F_Description", width: 200, align: "centor", sortable: false,
+                    formatter: function (value, row, index) {
+
+                        return '<a href="javascript:download(\'' + row.rowId + '\')">下载</a>';
+                    }
+                },
+
+            ],
+            pager: "#gridPager",
+            sortname: 'F_Start desc',
+            viewrecords: false
+        });
+        $("#btn_search").click(function () {
+            var queryJson = {
+                keyword: $("#txt_keyword").val()
+            }
+            $gridList.jqGrid('setGridParam', {
+                postData: { queryJson: JSON.stringify(queryJson) },
+            }).trigger('reloadGrid');
+        });
+    }
+    //$("#download").click(function () {
+    //    id: "download",
+    //    title: "下载文件",
+    //    url: "/ShiftManage/FileListTable/download",
+
+    //});
+    var keyValue = $("#gridList").jqGridRowValue().F_Id;
+    console.log($("#gridList").jqGridRowValue());
+    function download(keyValue) {
+        $.ajax({
+            type: 'get', //请求方式
+            url: '/ShiftManage/FileListTable/download?keyValue=' + keyValue,  //请求地址,需要根据自己服务器ip地址来替换
+            success: function (result) {  //请求成功以后函数被调用  response为服务器返回数据 该方法内部会将json字符串转为json对象
+                console.log(result);
+            },
+            error: function (xhr) {  //请求失败后调用
+                console.log(xhr);
+            }
+        });
+    }
+
+
+        //var a = document.createElement('a');
+        //a.href = "/ShiftManage/FileListTable/download";
+        //document.body.appendChild(a);
+        //a.style.display = 'none';
+        //a.download = '';
+        //a.click();
+    //}
+        //var f = $('#gridList_F_FileName').val() + $('#gridList_F_Type').val();
+        //var curWwwPath = window.document.location.href;
+        //var pathName = window.document.location.pathname;
+        //var pos = curWwwPath.indexOf(pathName);
+        //var localhostPath = curWwwPath.substring(0, pos);
+        //var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+        //var url = localhostPath + projectName + "/upload/file/" + f;
+        //window.open(url);
+
+    ////头工具栏事件
+    //table.on('tool(demo)', function (obj) {
+    //    var data = obj.data;
+    //    switch (obj.event) {
+    //        case 'do':
+    //            window.location.href = "../downloadFile?filePath=" + data.path; //文化保存路径
+    //            break;
+    //        case 'look':
+    //            break;
+    //    };
+    //}
+    //function btn_download() {
+    //    var keyValue = $("#gridList").jqGridRowValue().F_Id;
+    //    $.modalOpen({
+    //        id: "Form",
+    //        title: "文件下载",
+    //        url: "/ShiftManage/FileListTable/download?keyValue=" + keyValue,
+    //        width: "450px",
+    //        height: "350px",
+    //        callBack: function () {
+    //            top.frames[iframeId].download();
+    //        }
+    //        //maxmin: false,
+    //        //btn: null,
+    //    });
+
+    //}
+    //layui.use('table', function () {
+    //    var table = layui.table;
+
+    //    //监听行工具事件
+    //    table.on('#gridList', function (obj) {
+    //        var data = obj.data;
+
+    //        if (obj.event === 'download') {
+    //            // 获取XMLHttpRequest
+    //            var xmlResquest = new XMLHttpRequest();
+    //            //  发起请求
+    //            xmlResquest.open("POST", "/ShiftManage/FileListTable/download", true);
+    //            // 设置请求头类型
+    //            xmlResquest.setRequestHeader("Content-type", "application/json");
+    //            xmlResquest.setRequestHeader("F_id", data.id);
+    //            xmlResquest.responseType = "blob";
+    //            //  返回
+    //            xmlResquest.onload = function (oEvent) {
+    //                //alert(this.status);
+    //                var content = xmlResquest.response;
+    //                // 组装a标签
+    //                var elink = document.createElement("a");
+
+    //                //获取文件格式,截取文件后缀
+    //                var fileaddr = data.fileAddress;
+    //                var index = fileaddr.lastIndexOf(".");
+    //                var length = fileaddr.length;
+    //                var laterName = fileaddr.substring(index, length);
+    //                //拼接下载的文件名
+    //                var newFileName = data.fileName + laterName;
+    //                //设置文件下载路径
+    //                elink.download = newFileName;
+    //                elink.style.display = "none";
+    //                var blob = new Blob([content]);
+
+    //                //解决下载不存在文件的问题，根据blob大小判断
+    //                if (blob.size == 0) {
+    //                    layer.msg('服务器没找到此文件，请联系管理员!');
+    //                } else {
+    //                    elink.href = URL.createObjectURL(blob);
+    //                    document.body.appendChild(elink);
+    //                    elink.click();
+    //                    document.body.removeChild(elink);
+    //                }
+    //            };
+    //            xmlResquest.send();
+    //        }
+    //    });
+    //});
+</script>
+
+<div class="topPanel">
+    <div class="btn-group" style="padding-left:10px">
+        @*<a id="edui175_body" class="btn btn-primary" onclick="return $EDITORUI[&quot;edui175&quot;]._onClick(event, this);" onmousedown="$EDITORUI[" edui171"]._onTitlebarMouseDown(event, this);"><i class="fa fa-plus"></i>上传文件</a>
+            <input type="file" id="upload" muitilep size="5" multiple="multiple" accept="*" value="请选择上传文件..." />*@
+        @*<a class="btn btn-primary" onclick="btn_add()"><i class="fa fa-plus">上传文件</i></a>*@
+        <div class="layui-btn-container">
+            <button type="button" class="btn btn-primary layui-btn demoMore" id="test8">选择文件</button>
+            <button type="button" round size="mini" class="btn btn-primary layui-btn demoMore" id="test9">开始上传</button>
+
+        </div>
+    </div>
+    
+    @*<div class="toolbar">
+            <div class="btn-group">
+                <a class="btn btn-primary" onclick="btn_add()"><span class="glyphicon glyphicon-refresh"></span></a>
+            </div>
+            <div class="btn-group">
+                <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick=""><i class="fa fa-plus"></i>新建</a>
+            </div>
+            <div class="operate">
+                <ul class="nav nav-pills">
+                    <li class="first">已选中<span>1</span>项</li>
+                    <li><a id="NF-edit" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改</a></li>
+                    <li><a id="NF-delete" onclick="btn_delete() "><i class="fa fa-trash-o"></i>删除</a></li>
+                    <li><a id="NF-Details" onclick="btn_details()"><i class="fa fa-search-plus"></i>查看</a></li>
+                </ul>
+                <a href="javascript:;" class="close"></a>
+            </div>
+        </div>*@
+
+    <div class="search">
+        <table>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要搜索关键字" style="width: 200px;">
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+    <div id="gridPager"></div>
+</div>
+<script src="~/Content/js/index.js"></script>
+<script src="~/Content/js/indextab.js"></script>
+<script src="~/Content/js/loading/pace.min.js"></script>
+
+@*<script>
+    function btn_add() {
+        $.modalOpen({
+            id: "Form",
+            title: "上传文件",
+            url: "/ShiftManage/FileListTable/Form",
+            width: "450px",
+            height: "400px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].UploadFileJson();
+            }
+        });
+    }
+
+</script>*@
+
+<script>
+    layui.use(['upload', 'element', 'layer'], function () {
+        var $ = layui.jquery
+            , upload = layui.upload
+            , element = layui.element
+            , layer = layui.layer;
+
+        upload.render({
+            elem: '#test8'
+            , url: '/ShiftManage/FileListTable/UploadFileJson' //此处配置你自己的上传接口即可
+            , auto: false
+            //,multiple: true
+            ,accept: 'file' //普通文件
+            , bindAction: '#test9'
+            , done: function (msg) {
+                layer.msg('上传成功');
+                $.reload();
+                console.log(msg)
+            }
+             
+        });
+    });
+    layui.use(['download', 'element', 'layer'], function () {
+        var $ = layui.jquery
+            , download = layui.download
+            , element = layui.element
+            , layer = layui.layer;
+
+        download.render({
+            elem: '#test'
+            , url: '/upload/file/' //此处配置你自己的上传接口即可
+            , auto: false
+            //,multiple: true
+            , accept: 'file' //普通文件
+            , bindAction: '#test'
+            , done: function (msg) {
+                layer.msg('下载成功');
+                $.reload();
+                console.log(msg)
+            }
+
+        });
+    });
+</script>

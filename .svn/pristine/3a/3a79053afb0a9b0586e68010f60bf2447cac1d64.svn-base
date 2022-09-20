@@ -1,0 +1,209 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EMS.Data;
+using EMS.Domain.IRepository.ShiftManage;
+using EMS.Domain.Entity.ShiftManage;
+using System.Data.Common;
+using System.Data.SqlClient;
+using EMS.Domain.ViewModel;
+
+namespace EMS.Repository.ShiftManage
+{
+   public class CalendarRepository : RepositoryBase<CalendarEntity>, ICalendarRepository
+   {
+
+
+        public List<CalendarModel>  getList()
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT d.F_Id, i.F_Team, d.F_Text,d.F_Title,i.F_Backgroudcolor,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text order by i.F_Team
+                            ");//双表联合查询
+            //DbParameter[] parameter =
+            //{
+            //     new SqlParameter("@enCode",enCode)
+            //};
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString()).ToList<CalendarModel>();
+             //this.FindList(strSql.ToString(), null);
+        }
+
+        public List<CalendarModel> getModel(string date)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT d.F_Id, d.F_Text,d.F_Title,d.F_backgroundColor,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text 
+                            AND d.F_Start=@date
+                            ");
+            DbParameter[] parameter =
+            {
+                 new SqlParameter("@date",date)
+            };
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString(),parameter).ToList<CalendarModel>();
+            //this.FindList(strSql.ToString(), null);
+        }
+
+        public List<ShiftOrderModel> GetShiftOrder()
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT A.F_WeekInOrder,A.F_Name,A.F_Phone,B.F_WeekOutOrder,B.F_Name F_WeekName,B.F_Phone WeekPhone
+                            from (SELECT F_WeekInOrder,F_Name ,F_Phone FROM [dbo].[Shift_Table]BBB WHERE F_Team= '设备联网组' ) A
+                                    LEFT JOIN (SELECT F_WeekOutOrder,F_Name,F_Phone FROM [dbo].[Shift_Table] AAA WHERE F_Team= '设备联网组' )B 
+                            ON A.F_WeekInOrder = B.F_WeekOutOrder ORDER BY A.F_WeekInOrder,B.F_WeekOutOrder
+                            ");
+
+            return dbcontext.Database.SqlQuery<ShiftOrderModel>(strSql.ToString()).ToList<ShiftOrderModel>();
+        }
+
+        public List<CalendarModel> getWeekModel(DateTime weekDate)
+        {
+            DateTime second = weekDate.AddDays(1);
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT  i.F_Team, d.F_Text,F_Email,d.F_Title,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text 
+                            AND d.F_Start >= @weekDate and d.F_Start <= @second 
+                            ");
+            DbParameter[] parameter =
+            {
+                 new SqlParameter("@weekDate",weekDate),
+                 new SqlParameter("@second",second)
+            };
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString(), parameter).ToList<CalendarModel>();
+        }
+        public List<CalendarModel> getHolidayModel()
+        {
+
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT  i.F_Team, d.F_Text,F_Email,d.F_Title,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text 
+                            AND d.F_Title = '周末值班' and d.F_Start >= GETDATE() 
+                            ");
+
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString()).ToList<CalendarModel>();
+        }
+        public List<string> inWeekitModel(CalendarEntity calendarEntity)
+        {
+            string team = calendarEntity.F_Team;
+            StringBuilder strSql = new StringBuilder();
+            if (team == "设备联网组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = 'IT部门' and F_Team= '设备联网组' ORDER BY F_WeekInOrder");
+            }
+            else if (team == "PWS&B2B组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = 'IT部门' and  F_Team= 'PWS&B2B组' ORDER BY F_WeekInOrder");
+            }
+            else if (team == "网络维护组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = 'IT部门' and  F_Team= '网络维护组' ORDER BY F_WeekInOrder");
+            }
+            return dbcontext.Database.SqlQuery<string>(strSql.ToString()).ToList<string>();
+        }
+        public List<string> outWeekitModel(CalendarEntity calendarEntity)
+        {
+            string team = calendarEntity.F_Team;
+            StringBuilder strSql = new StringBuilder();
+            if (team == "设备联网组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department='IT部门' and  F_Team= '设备联网组' ORDER BY F_WeekOutOrder");
+            }
+            else if (team == "PWS&B2B组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department= 'IT部门' and  F_Team= 'PWS&B2B组'  ORDER BY F_WeekOutOrder");
+            }
+            else if (team == "网络维护组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department= 'IT部门' and  F_Team= '网络维护组'  ORDER BY F_WeekOutOrder");
+            }
+            return dbcontext.Database.SqlQuery<string>(strSql.ToString()).ToList<string>();
+        }
+        public List<string> inWeekzz1Model(CalendarEntity calendarEntity)
+        {
+            string team = calendarEntity.F_Team;
+            StringBuilder strSql = new StringBuilder();
+            if (team == "减划组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '减划组' ORDER BY F_WeekInOrder");
+            }
+            else if (team == "上芯组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '上芯组' ORDER BY F_WeekInOrder");
+            }
+            else if (team == "压焊组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '压焊组' ORDER BY F_WeekInOrder");
+            }
+            else if (team == "切割组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '切割组' ORDER BY F_WeekInOrder");
+            }
+            return dbcontext.Database.SqlQuery<string>(strSql.ToString()).ToList<string>();
+        }
+        public List<string> outWeekzz1Model(CalendarEntity calendarEntity)
+        {
+            string team = calendarEntity.F_Team;
+            StringBuilder strSql = new StringBuilder();
+            if (team == "减划组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '减划组'  ORDER BY F_WeekOutOrder");
+            }
+            else if (team == "上芯组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '上芯组'   ORDER BY F_WeekOutOrder");
+            }
+            else if (team == "压焊组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '压焊组'   ORDER BY F_WeekOutOrder");
+            }
+            else if (team == "切割组")
+            {
+                strSql.Append(@"SELECT F_Name from Shift_Table WHERE F_Department = '制造一部' and F_Team= '切割组'   ORDER BY F_WeekOutOrder");
+            }
+            return dbcontext.Database.SqlQuery<string>(strSql.ToString()).ToList<string>();
+        }
+        public List<CalendarModel> getITList()
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT d.F_Id, i.F_Team, d.F_Text,d.F_Title,i.F_Backgroudcolor,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text 
+                                WHERE d.F_Department= 'IT部门'  order by i.F_Team");           
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString()).ToList<CalendarModel>();          
+        }
+        public List<CalendarModel> getZZ1List()
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append(@"SELECT d.F_Id, i.F_Team, d.F_Text,d.F_Title,i.F_Backgroudcolor,d.F_Start,i.F_Phone
+                            FROM    Shift_Schedule d
+                                    INNER  JOIN Shift_Table i ON i.F_Name = d.F_Text 
+                                WHERE d.F_Department= '制造一部'  order by i.F_Team");
+            return dbcontext.Database.SqlQuery<CalendarModel>(strSql.ToString()).ToList<CalendarModel>();
+        }
+        public void SubmitForm(CalendarEntity Entity, string keyValue)
+        {
+            using (var db = new RepositoryBase().BeginTrans())
+            {
+                if (!string.IsNullOrEmpty(keyValue))
+                {
+                    db.Update(Entity);
+                }
+                else
+                {
+                    //userLogOnEntity.F_Id = userEntity.F_Id;
+                    //userLogOnEntity.F_UserId = userEntity.F_Id;
+                    //userLogOnEntity.F_UserSecretkey = Md5.md5(Common.CreateNo(), 16).ToLower();
+                    //userLogOnEntity.F_UserPassword = Md5.md5(DESEncrypt.Encrypt(Md5.md5(userLogOnEntity.F_UserPassword, 32).ToLower(), userLogOnEntity.F_UserSecretkey).ToLower(), 32).ToLower();
+                    db.Insert(Entity);
+                    //db.Insert(userLogOnEntity);
+                }
+                db.Commit();
+            }
+        }
+    }
+}

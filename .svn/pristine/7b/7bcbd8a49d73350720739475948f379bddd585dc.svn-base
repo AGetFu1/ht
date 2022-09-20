@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+<script>
+    $(function () {
+        $('.wrapper').height($(window).height() - 11);
+    })
+    function btn_remove() {
+        $("#OldPass").val("");
+        $("#NewPass").val("");
+        $("#NewPass1").val("");
+    }
+    function btn_add() {
+        var OldPass = $("#OldPass").val();
+        var NewPass = $("#NewPass").val();
+        var NewPass1 = $("#NewPass1").val();
+        if (OldPass !== null)
+        {
+            if (NewPass!==null)
+            {
+                if (NewPass1 !== null) {
+                    if (NewPass.length >= 8 && NewPass1.length >= 8)
+                    {
+                        $.modalConfirm("注：您确定要修改密吗？", function (r) {
+                            if (r) {
+                                $.submitForm({
+                                    url: "/SystemManage/ChangePassword/ChangePassword",
+                                    param: { OldPass: OldPass, NewPass: NewPass, NewPass1: NewPass1 },// usrName: Name, usrCode: Code
+                                    success: function () {
+                                        $("#OldPass").val("");
+                                        $("#NewPass").val("");
+                                        $("#NewPass1").val("");
+                                    }
+                                })
+                            }
+                        });
+                    } else {   }
+                } else {   }
+            } else {    }
+        } else {     }
+    }
+</script>
+<style>
+    .div-inline {
+        display: inline
+    }
+</style>
+<div class="wrapper">
+    <div class="tab-content" style="padding-top: 5%;padding-left: 25%">
+        <div id="a" class="tab-pane active" style="padding: 15px;">
+            <ul class="pop-list">
+                <li>
+                    <label>旧密码</label>
+                    <input id="OldPass" autocomplete="on" onKeyUp="value=value.replace(/[\W]/g,'')" type="password" class="form-control" />
+                </li>
+                <li>
+                    <label>新密码</label>
+                    <input id="NewPass" autocomplete="on" onKeyUp="value=value.replace(/[\W]/g,'')" type="password" class="form-control" />
+                </li>
+                <li>
+                    <label>确认新密码</label>
+                    <input id="NewPass1" autocomplete="on" onKeyUp="value=value.replace(/[\W]/g,'')" type="password" class="form-control" />
+                </li>
+                <li>
+                    <label>注意：1.密码只允许大小写字母与数字。2.密码长度必须大于等于八位。请按规范修改。</label>
+                </li>
+                <li>
+                    <div class="div-inline" style="padding-right: 30px;"> </div>
+                    <div class="div-inline" style="padding-left: 115px;">
+                        <a class="btn btn-primary" onclick="btn_add()"><i class="fa fa-save" style="margin-right:5px;"></i>确认修改</a>
+                    </div>
+                    <div class="div-inline" style="padding-right: 60px;"> </div>
+                    <div class="div-inline" style="padding-right: 115px;">
+                        <a class="btn btn-primary" onclick="btn_remove()"><i class="fa fa-times" style="margin-left:5px;"></i>取消操作</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

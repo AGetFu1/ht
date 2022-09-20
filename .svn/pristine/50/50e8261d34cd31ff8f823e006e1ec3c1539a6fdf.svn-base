@@ -1,0 +1,190 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+@*<script src="~/Content/js/datepicker/WdatePicker.js"></script>*@
+<!DOCTYPE>
+<script>
+    $(function () {
+        $('#layout').layout();
+        treeView();
+        gridList();
+    })
+    function treeView() {
+        $("#itemTree").treeview({
+            url: "/ShiftManage/DepartmentIT/GetTreeJson",
+            onnodeclick: function (i) {
+                $("#txt_keyword").val('');
+                $('#btn_search').trigger("click");
+                var as = $("#itemTree").getCurrentNode().img;
+                $('.bbit-tree-node').each(function () {
+                    $('.bbit-tree-node-anchor').attr("href", "../../" + as);
+                });
+            }
+        });
+    }
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/ShiftManage/Calendar/GetGridJson",
+            height: $(window).height() - 128,
+            colModel: [
+                { label: '主键', name: 'F_Id', hidden: true },
+                { label: '姓名', name: 'F_Text', width: 120, align: 'left' },
+                { label: '主题', name: 'F_Title', width: 120, align: 'left' },
+                { label: '值班时间', name: 'F_Start', width: 200, align: 'left' },
+                { label: '组别', name: 'F_Team', width: 200, align: 'left' },
+                { label: '备注', name: '', width: 200, align: 'left' }
+            ],
+            pager: "#gridPager",
+            sortname: 'F_Start desc',
+            viewrecords: true,
+        });
+        $("#btn_search").click(function () {
+            var queryJson = {
+                keyword: $("#txt_keyword").val()
+            }
+            $gridList.jqGrid('setGridParam', {
+                postData: { queryJson: JSON.stringify(queryJson) },
+            }).trigger('reloadGrid');
+        });
+    }
+    function btn_add() {
+        $.modalOpen({
+            id: "Form",
+            title: "新增",
+            url: "/ShiftManage/Calendar/Form",
+            width: "450px",
+            height: "400px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+    function btn_edit() {
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+        $.modalOpen({
+            id: "Form",
+            title: "修改",
+            url: "/ShiftManage/Calendar/Form?keyValue=" + keyValue,
+            width: "450px",
+            height: "400px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+    function btn_delete() {
+        $.deleteForm({
+            url: "/ShiftManage/Calendar/DeleteForm",
+            param: { keyValue: $("#gridList").jqGridRowValue().F_Id },
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    function btn_details() {
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+        $.modalOpen({
+            id: "Details",
+            title: "查看",
+            url: "/ShiftManage/Calendar/Details?keyValue=" + keyValue,
+            width: "350px",
+            height: "300px",
+            btn: null,
+        });
+    }
+    function btn_upload() {
+        $.modalOpen({
+            id: "UploadFile",
+            title: "上传文件",
+            url: "/ShiftManage/Calendar/UploadFile",
+            width: "750px",
+            height: "250px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            },
+            btn: null,
+        });
+    }
+    function btn_itemstype() {
+        $.modalOpen({
+            id: "ItemsType",
+            title: "排班",
+            url: "/ShiftManage/Calendar/Shift",
+            width: "450px",
+            height: "400px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+    //function btn_scheduling() {
+    //    $.modalOpen({
+    //        id: "Scheduling",
+    //        title: "区域分类",
+    //        url: "/ShiftManage/Calendar/Form1",
+    //        width: "450px",
+    //        height: "400px",
+    //        maxmin: false,
+    //        btn: null,
+
+    //    });
+    //}
+</script>
+<div class="ui-layout" id="layout" style="height: 100%; width: 100%;">
+    <div class="ui-layout-west">
+        <div id="itemTree"></div>
+    </div>
+    <div class="ui-layout-center">
+        <div class="topPanel">
+            @*<div class="btn-group" style="padding-left:10px">
+                    <a authorize="yes" class="btn btn-primary" onclick="btn_upload()"><i class="fa fa-plus"></i>批量导入</a>
+                </div>*@
+            <div class="toolbar">
+                @*<div class="btn-group">
+                        <a id="NF-scheduling" class="btn btn-primary dropdown-text" onclick="btn_scheduling()"><i class="fa fa-plus"></i>排班</a>
+                    </div>*@
+                <div class="btn-group">
+                    <a id="NF-add" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>新建</a>
+                </div>
+                <div class="btn-group ">
+                    <a id="NF-itemstype" class="btn btn-primary dropdown-text" onclick="btn_itemstype()"><i class="fa fa-plus"></i>排班</a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+                </div>
+                <div class="operate">
+                    <ul class="nav nav-pills">
+                        <li class="first">已选中<span>1</span>项</li>
+                        <li><a id="NF-edit" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改</a></li>
+                        <li><a id="NF-delete" onclick="btn_delete()"><i class="fa fa-trash-o"></i>删除</a></li>
+                        <li><a id="NF-Details" onclick="btn_details()"><i class="fa fa-search-plus"></i>查看</a></li>
+                    </ul>
+                    <a href="javascript:;" class="close"></a>
+                </div>
+                <script>$('.toolbar').authorizeButton()</script>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要搜索关键字" style="width: 200px;">
+                                <span class="input-group-btn">
+                                    <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="gridPanel">
+            <table id="gridList"></table>
+            <div id="gridPager"></div>
+        </div>
+    </div>
+    @*<script src="~/Content/js/index.js"></script>
+        <script src="~/Content/js/indextab.js"></script>*@
+</div>

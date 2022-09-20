@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Krajee JQuery Plugins - &copy; Kartik</title>
+    <link rel="stylesheet" href="~/Content/fileInput/css/bootstrap-icons.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/Content/fileInput/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <link href="~/Content/fileInput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/Content/fileInput/css/all.css" crossorigin="anonymous">
+    <link href="~/Content/fileInput/themes/explorer-fa/theme.min.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="~/Content/js/jquery/jquery-2.1.1.min.js" crossorigin="anonymous"></script>
+    <script src="~/Content/fileInput/js/plugins/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/Content/fileInput/js/plugins/piexif.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/js/plugins/sortable.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/js/fileinput.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/js/locales/fr.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/js/locales/zh.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/js/locales/es.js" type="text/javascript"></script>
+    <script src="~/Content/fileInput/themes/fas/theme.js" type="text/javascript"></script>
+
+    <script src="~/Content/js/wdtree/tree.js"></script>
+    <script src="~/Content/js/select2/select2.min.js"></script>
+    <link href="~/Content/js/wizard/wizard.css" rel="stylesheet" />
+    <script src="~/Content/js/wizard/wizard.js"></script>
+    <script src="~/Content/js/framework-ui.js"></script>
+</head>
+<body>
+    <div class="container my-md-1">
+        <br />
+        <br />
+        <br />
+        <h5>选择文件后，点击Upload进行上传文件</h5>
+        <input id="file-0" name="file-0" type="file" class="file-loading">
+        <br>
+    </div>
+    <script>
+    //$('#file-fr').fileinput({
+        //    theme: 'fas',
+        //    language: 'fr',
+        //    uploadUrl: '#',
+        //    allowedFileExtensions: ['jpg', 'png', 'gif']
+        //});
+        //$('#file-es').fileinput({
+        //    theme: 'fas',
+        //    language: 'es',
+        //    uploadUrl: '#',
+        //    allowedFileExtensions: ['jpg', 'png', 'gif']
+        //});
+        var itemId = $.request("keyValue");
+        $("#file-0").fileinput({
+            theme: 'bs5',
+            language: 'zh',
+            maxFileCount: 1,
+            showUpload: true,
+            showPreview: false,
+            maxFileSize: 10000000,
+            showCaption: true,
+            enctype: 'multipart/form-data',
+            uploadUrl: '/FileManage/FileListTable/UploadFileJson?keyValue=' + itemId,
+        }).on('fileloaded', function (event, file, previewId, index) {
+            
+        });
+        //$(".btn-warning").on('click', function () {
+        //    var $el = $("#file-4");
+        //    if ($el.attr('disabled')) {
+        //        $el.fileinput('enable');
+        //    } else {
+        //        $el.fileinput('disable');
+        //    }
+        //});
+        //$(".btn-info").on('click', function () {
+        //    $("#file-4").fileinput('refresh', { previewClass: 'bg-info' });
+        //});
+        /*
+         $('#file-4').on('fileselectnone', function() {
+         alert('Huh! You selected no files.');
+         });
+         $('#file-4').on('filebrowse', function() {
+         alert('File browse clicked for #file-4');
+         });
+         */
+        $(document).ready(function () {
+            $("#test-upload").fileinput({
+                'theme': 'bs5',
+                'showPreview': false,
+                'allowedFileExtensions': ['xlsx', 'xls'],
+                'elErrorContainer': '#errorBlock'
+            });
+
+            /*
+             $("#test-upload").on('fileloaded', function(event, file, previewId, index) {
+             alert('i = ' + index + ', id = ' + previewId + ', file = ' + file.name);
+             });
+             */
+        });</script>
+</body>
+
+</html>

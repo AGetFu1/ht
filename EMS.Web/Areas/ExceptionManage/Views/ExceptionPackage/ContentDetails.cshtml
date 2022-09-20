@@ -1,0 +1,672 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.all.js"></script>
+<script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/lang/zh-cn/zh-cn.js"></script>
+<script src="~/Scripts/vue.min.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+<link rel="stylesheet" href="~/Content/ElementUI/element-ui.css" />
+<script src="~/Scripts/ElementUI/element-ui.js"></script>
+<style>
+    #commentform {
+        -webkit-text-size-adjust: 100%;
+        font-size: 14px;
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        tab-size: 4;
+        font-weight: normal;
+        box-sizing: inherit;
+        outline: 0;
+        list-style: none;
+        margin: 0;
+        width: 100%;
+        position: relative;
+        background: rgba(245,246,247,0.8);
+        border-radius: 8px;
+        padding: 8px 0;
+    }
+    .comment-content {
+        width: 100%;
+    }
+    .comment-content .open {
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        tab-size: 4;
+        list-style: none;
+        outline: none;
+        overflow: auto;
+        margin: 0;
+        display: block;
+        width: 100%;
+        background: rgba(248,249,251,0.8);
+        border: none;
+        border-radius: 4px;
+        resize: none;
+        font-size: 14px;
+        line-height: 22px;
+        box-sizing: border-box;
+        transition: height .3s ease-in-out;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        height: 60px;
+        padding: 0 12px;
+    }
+    .comment-operate-box {
+        -webkit-text-size-adjust: 100%;
+        font-size: 14px;
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        tab-size: 4;
+        list-style: none;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        margin: 0;
+        display: flex;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 0 12px 0 12px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        transition: display .3s ease-in-out;
+    }
+    .comment-operate-l {
+        -webkit-text-size-adjust: 100%;
+        font-size: 14px;
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        tab-size: 4;
+        list-style: none;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+    }
+    .comment-operate-c {
+        -webkit-text-size-adjust: 100%;
+        font-size: 14px;
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        tab-size: 4;
+        list-style: none;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+    .comment-operate-r {
+        -webkit-text-size-adjust: 100%;
+        font-size: 14px;
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        tab-size: 4;
+        list-style: none;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+    }
+    .comment-list-container {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+        display: block;
+    }
+    .comment-list-box {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+    .comment-list {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    .comment-line-box {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        position: relative;
+    }
+    .comment-center {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+    .comment-list-href {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        list-style: none;
+        -webkit-box-direction: normal;
+        margin: 0;
+        padding: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        outline: none;
+        text-decoration: none;
+        cursor: pointer;
+        color: #4f4f4f;
+        display: block;
+        padding-top: 15px;
+        height: 48px;
+    }
+    .avatar {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        list-style: none;
+        -webkit-box-direction: normal;
+        font-weight: normal;
+        cursor: pointer;
+        color: #4f4f4f;
+        box-sizing: inherit;
+        outline: none;
+        display: block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #e8e8ed;
+    }
+    .new-info-box {
+        width:100%;
+    }
+    .new-info-box .clearfix {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+    .comment-top {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin-left: 10px;
+        width: 100%;
+    }
+    .user-box {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        line-height: 20px;
+        font-size: 14px;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        -webkit-box-flex: 1;
+        flex: 1;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+    }
+    .name-href {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        list-style: none;
+        -webkit-box-direction: normal;
+        line-height: 20px;
+        font-size: 14px;
+        margin: 0;
+        margin-right:10px;
+        padding: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        outline: none;
+        cursor: pointer;
+        color: #4f4f4f;
+        text-decoration: none !important;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+    }
+    .date {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        list-style: none;
+        -webkit-box-direction: normal;
+        line-height: 20px;
+        outline: 0;
+        margin: 0;
+        padding: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        font-size: 14px;
+        color: #777888;
+    }
+    .opt-comment {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        font-size: 14px;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        line-height: 20px;
+        height: 20px;
+        display: none;
+    }
+    .btn-bt .btn-report {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        list-style: none;
+        -webkit-box-direction: normal;
+        line-height: 20px;
+        margin: 0;
+        padding: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        outline: none;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+        color: #555666;
+        margin-right: 16px;
+        position: relative;
+    }
+    .comment_img_replay {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 20px;
+        box-sizing: inherit;
+        border: 0;
+        outline: none;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        vertical-align: -3px;
+        margin-right: 2px;
+    }
+    .new-comment {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        list-style: none;
+        -webkit-box-direction: normal;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        color: #222226;
+        line-height: 22px;
+        word-break: break-word;
+    }
+    .clearfix::after {
+        display: flex;
+        content: "";
+        clear: both;
+        flex: 1;
+        height: 1px;
+        background: #ccc;
+    }
+    .comment-list-item {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        width:100%;
+        color: #333;
+        list-style: none;
+        -webkit-box-direction: normal;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        width: 100%;
+    }
+    .comment-edit-box {
+        display: flex;
+    }
+    .comment-edit-box .d-flex {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+    }
+    .user-img {
+        -webkit-font-smoothing: antialiased;
+        font-family: "SF Pro Display",Roboto,Noto,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        font-size: 14px;
+        line-height: 1.57142857;
+        color: #333;
+        outline: 0;
+        font-weight: normal;
+        -webkit-box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        margin-right: 8px;
+        padding-top: 9px;
+    }
+</style>
+
+<div id="Details">
+    <div>
+        <h1 style="text-align:center">{{tilte}}</h1>
+    </div>
+    <div class="content">
+        <p>
+            <div class="markdown" v-html=articleContentHTML></div>
+        </p>
+    </div>
+
+   
+    @*<div id="comment-container" class="ui blue comments" style="max-width: 100%">
+        <div>
+            <div class="ui threaded comments">
+                <h3 class="ui dividing header">建议反馈</h3>
+                <div class="comment" >
+                    <a class="avatar">
+                        <img src="~/Content/img/log.jpeg" v-if="!comment.comment_admin">
+                        <img src="~/Content/img/log.jpeg" v-if="comment.comment_admin">
+                    </a>
+                    <div class="content">
+                        <a class="author">
+                            <span>
+                                {{ comment.F_NiceName }}
+                            </span>
+                        </a>
+                        <div class="metadata">
+                            <span class="date">{{ comment.F_CreatorTime }}</span>
+                        </div>
+                        <div class="text">{{ comment.F_Content }}</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div style="font-size: larger; font-weight:900; line-height:64px">
+    <div class="comment-edit-box d-flex">
+        <div class="user-img">
+            <a>
+                <img class="avatar" src="~/Content/img/samples/head_120.png">
+            </a>
+        </div>
+        <form id="commentform">
+            <textarea v-model="comment.F_Content"  v-on:input="descInput" class="comment-content open" name="comment_content" id="comment_content" placeholder="对这条异常方案,是否可以解决你的问题，请补充你的方案,或者反馈建议" maxlength="1000">
+            </textarea>
+            <div class="comment-operate-box">
+                <div class="comment-operate-l">
+                    <span id="tip_comment" class="tip">还能输入<em>{{len}}</em>个字符</span>
+                </div>
+                <div class="comment-operate-c">
+                    &nbsp;
+                </div>
+                <div class="comment-operate-r">
+                    <div class="comment-operate-item">
+                        <input type="hidden" id="comment_replyId" name="comment_replyId" value="">
+                        <input type="hidden" id="article_id" name="article_id" value="122390700">
+                        <input type="hidden" id="comment_userId" name="comment_userId" value="">
+                        <input type="hidden" id="commentId" name="commentId" value="">
+                        <a data-report-click="{&quot;mod&quot;:&quot;1582594662_003&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4227&quot;,&quot;ab&quot;:&quot;new&quot;}">
+                            <input type="button" v-on:click="PostComment" class="btn-comment-input btn-comment-defualt" value="发表">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    </div>
+    <div class="comment-list-container">
+        <div class="comment-list-box">
+            <ul class="comment-list">
+                <li class="comment-line-box ">
+                    <div class="comment-list-item"  v-for="item in comments" >
+                        <a class="comment-list-href">
+                            <img src="~/Content/img/samples/head_120.png" username="avatar" alt="avatar" class="avatar">
+                        </a>
+                        <div class="new-info-box clearfix">
+                            <div class="comment-top">
+                                <div class="user-box">
+                                    <a class="name-href">
+                                        <span class="name ">{{item.F_NiceName}}</span>
+                                    </a> 
+                                    <span class="date" title="2022-05-19 15:09:42">{{ item.F_CreatorTime}}</span>
+                                </div>
+                                <div class="opt-comment">
+                                    <a class="btn-bt  btn-report">
+                                        <img class="btn-report-img" src="~/Content/img/newCommentReplyWhite.png" title="">
+                                        <div class="hide-box">
+                                            <span class="hide-item hide-delete" data-type="delete" data-nickname="qq_43758347">删除</span>
+                                            <span data-type="report" class="hide-item hide-report"> 举报</span>
+                                        </div>
+                                    </a>
+                                    <img class="comment_img_replay" src="~/Content/img/newCommentReplyWhite.png">
+                                    <a class="btn-bt  btn-reply" data-type="reply" data-flag="true">回复</a>
+                                </div>
+                                <div class="comment-like " data-commentid="21511115">
+                                    <div class="new-comment">{{item.F_Content}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    var keyValue = $.request("keyValue");
+
+    var vm = new Vue({
+        el: "#Details",
+        data() {
+            return {
+                tilte: "",
+                articleContentHTML: '',
+                comment: {
+                    "F_Content": '',
+                    "F_NiceName": '小白',
+                    "F_CreatorTime": "2022-05-19", 
+                },
+                len: 1000,
+                comments: [],
+                showTime:'',
+            }
+        },
+        created: function (res) { 
+            this.GetDetails(keyValue);
+        },
+        methods: {
+            GetDetails: function (id) {
+                var _self = this;
+                _self.$http.get("/ExceptionManage/ExceptionPackage/GetFormJson", { params: { keyValue: id } }).then(
+                    function (response) {
+                           //successCallback                                    
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                            this.articleContentHTML = response.body.F_Description;
+                            this.tilte = response.body.F_ItemName;
+                            this.GetComments(id);
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400",response);
+                });
+            },
+            PostComment() {
+                this.comment.F_ExpId = keyValue;
+                this.$http.post("/ExceptionManage/Comment/Submit", this.comment).then(res => {
+                    this.comment.F_Content = '';
+                    this.GetComments(keyValue);
+                    this.len = 1000
+                 })
+            },
+            GetComments: function (id) {
+                var _self = this;
+                _self.$http.get("/ExceptionManage/Comment/GetList", { params: { exceptionId: id } }).then(
+                    function (response) {
+                        this.comments = JSON.parse(response.bodyText);
+                        console.log(this.comments);
+                        //for (var i in this.comments) {
+                        //    console.log(i, this.comments[i]);
+                        //}
+                        //successCallback                                    
+                        if (response.data.Code == 500) {
+
+                        }
+                        else {
+                           
+                        }
+                    }
+                ).catch(function (response) {
+
+                });
+            },
+            descInput: function () {
+                var txtVal = this.comment.F_Content.length;
+                this.len = 1000-txtVal
+            },
+        },
+        concomputed: {
+            ShowTime: function (beginTime) {
+                var dateBegin = new Date(beginTime);
+                var dateEnd = new Date();
+                var dateDiff = dateEnd.getTime() - dateBegin.getTime(); //毫秒值
+                var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+                var leave1 = dateDiff % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
+                var hours = Math.floor(leave1 / (3600 * 1000)); //计算出小时数
+                //计算相差分钟数
+                var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
+                var minutes = Math.floor(leave2 / (60 * 1000)); //计算相差分钟数
+                //计算相差秒数
+                var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
+                var seconds = Math.round(leave3 / 1000);
+                console.log(
+                    "相差" +
+                    dayDiff +
+                    "天" +
+                    hours +
+                    "小时" +
+                    minutes +
+                    "分钟" +
+                    seconds +
+                    "秒"
+                );
+                this.seconds = seconds;
+                this.minutes = minutes;
+            },
+        }
+
+    })
+
+
+</script>
+

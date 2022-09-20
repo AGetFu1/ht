@@ -1,0 +1,942 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+@*<script src="~/Content/js/datepicker/WdatePicker.js"></script>*@
+<!DOCTYPE>
+<script src="~/Scripts/vue.min.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+<link rel="stylesheet" href="~/Content/ElementUI/element-ui.css" />
+<script src="~/Scripts/ElementUI/element-ui.js"></script>
+<style>
+    .shifttitle {
+        font-family: 微软雅黑;
+        line-height: 80px;
+        text-align: center;
+        font-size: 35px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .contenttitle {
+        font-family: 微软雅黑;
+        text-align: right;
+        font-size: 10px;
+        padding-right: 130px;
+    }
+
+    .contentwrapper {
+        font-size: 12px;
+        font-family: 微软雅黑;
+        margin-bottom: 20px;
+    }
+
+    .MsoNormal {
+        font-size: 12px;
+        font-family: 微软雅黑;
+        line-height: 25px;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    .contentdesc {
+        font-size: 12px;
+        font-family: 微软雅黑;
+        line-height: 25px;
+    }
+
+    .contentupdate {
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    .docinfo {
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    .MsoNormalTable .ke-zeroborder {
+        margin-right: 50px;
+        margin: auto;
+    }
+
+    tbody {
+        font-size: 12px;
+        font-family: 微软雅黑;
+        line-height: 25px;
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin: auto;
+    }
+
+    .shiftType {
+        margin-left: 30px;
+        font-size: 25px;
+    }
+
+    .shiftDate {
+        margin-left: 30px;
+        font-size: 20px;
+    }
+</style>
+
+<div class="ui-layout" id="layout" style="height: 100%; width: 100%;">
+    <div class="ui-layout-west">
+        <div id="itemTree"></div>
+    </div>
+    <div class="ui-layout-center">
+        <div class="contentwrapper" id="contentwrapper">
+            <div class="shifttitle">IT值班表</div>
+            <div class="docinfo" style="font-size:25px">
+                <a href="http://192.168.99.157:3698/upFile/值班表.docx">IT值班表：详情可见文档</a>
+            </div>
+            <div class="contentdesc">
+                <p class="MsoNormal">
+                    <b><span style="font-size:16px;"> </span></b>
+                </p>
+                <p class="shiftType">
+                    <b><span style="font-size:25px;">周末值班表</span></b>
+                </p>
+                <p class="MsoNormal">
+                    <br>
+                </p>
+                <p class="MsoNormal">
+                    <b> </b>
+                </p>
+                <p class="MsoNormal">
+                </p><p class="shiftDate">
+                    <b>日期：<span>{{SaturdayDate}}</span>、<span>{{Sunday}}</span>号值班人员信息如下：<span></span></b>
+                </p>
+                <p class="MsoNormal" style="text-indent:36.0pt;">
+                    <br>
+                </p>
+                <table style="margin:auto">
+                    <tbody>
+                        <tr>
+                            <td>
+
+                                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="992" style="width: 595.8pt; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr>
+                                            <td width="992" colspan="4" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                                    设备联网组<span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班人<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班日期<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班电话<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    邮箱<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr v-for="item in weekShift" v-if="item.F_Team=='设备联网组'">
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align: center; font-weight: bold;">
+                                                    {{item.F_Text}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;font-weight:bold;">
+                                                    {{item.F_Start}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Phone}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Email}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                                <p class="MsoNormal">
+                                    <br>
+                                </p>
+                                <p class="MsoNormal">
+                                    <br>
+                                </p>
+                                <p class="MsoNormal">
+                                    <b>
+                                        <br>
+                                    </b>
+                                </p>
+                                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="992" style="width: 595.8pt; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr>
+                                            <td width="992" colspan="4" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                                    PWS&B2B组<span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班人<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班日期<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班电话<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    邮箱<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                                <p class="MsoNormal" style="background:white;">
+                                                    <b><span style="font-size:16px;"> </span></b>
+                                                </p>
+                                                <p class="MsoNormal" style="background:white;">
+                                                    <b><span style="font-size:16px;"> </span></b>
+                                                </p>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr v-for="item in weekShift" v-if="item.F_Team=='PWS&B2B组'">
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align: center; font-weight: bold;">
+                                                    {{item.F_Text}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;font-weight:bold;">
+                                                    {{item.F_Start}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Phone}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Email}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <p class="MsoNormal">
+                                    <br>
+                                </p>
+                                <p class="MsoNormal">
+                                    <br>
+                                </p>
+                                <p class="MsoNormal">
+                                    <b>
+                                        <br>
+                                    </b>
+                                </p>
+                                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="992" style="width: 595.8pt; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr>
+                                            <td width="992" colspan="4" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                                    网络维护组<span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班人<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班日期<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    值班电话<span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    邮箱<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                                <p class="MsoNormal" style="background:white;">
+                                                    <b><span style="font-size:16px;"> </span></b>
+                                                </p>
+                                                <p class="MsoNormal" style="background:white;">
+                                                    <b><span style="font-size:16px;"> </span></b>
+                                                </p>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr v-for="item in weekShift" v-if="item.F_Team=='网络维护组'">
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align: center; font-weight: bold;">
+                                                    {{item.F_Text}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;font-weight:bold;">
+                                                    {{item.F_Start}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Phone}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                            <td width="127" style="border:solid windowtext 1.0pt;">
+                                                <p class="MsoNormal" style="text-align:center;">
+                                                    {{item.F_Email}}<span class="MsoHyperlink"><span></span></span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p></p>
+                <p class="MsoNormal">
+                    <br>
+                </p>
+                <p class="MsoNormal">
+                    <b><span style="font-size:25px;">周内值班表</span></b>
+                </p>
+                <p class="MsoNormal">
+                    <b><span style="font-size:16px;"><span style="background-color:#FFFFFF;"> </span></span></b>
+                </p>
+                <p class="MsoNormal">
+                    <br>
+                </p>
+                <p class="MsoNormal">
+                    <b>◆软件组（<b><span style="background-color:#FFFFFF;">PWS&amp;B2B组</span></b>）</b>
+                </p>
+                <p class="MsoNormal">
+                    <b><span></span></b>
+                </p>
+                <p class="MsoNormal">
+                    <b>
+                        <br>
+                    </b>
+                </p>
+
+                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="89%" style="width:89.26%;border-collapse:collapse;">
+                    <tbody>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span> </span>
+                                </p>
+                            </td>
+                            <td width="26%" colspan="2" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <b>组长</b>
+                                </p>
+                            </td>
+                            <td width="65%" colspan="6" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <b>组员</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" style="margin-left:0cm;">
+                                    <b>周一</b>
+                                </p>
+                            </td>
+                            <td width="11%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">穆引娣</span>
+                                </p>
+                            </td>
+                            <td width="14%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">18209296122</span>
+                                </p>
+                            </td>
+                            <td width="13%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">张一凡</span>
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">18142413651</span>
+                                </p>
+                            </td>
+                            <td width="12%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    袁赫
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>18091319215</span>
+                                </p>
+                            </td>
+                            <td width="3%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                            <td width="7%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" style="margin-left:0cm;">
+                                    <b>周二</b>
+                                </p>
+                            </td>
+                            <td width="11%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">张照青</span>
+                                </p>
+                            </td>
+                            <td width="14%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">15515943629</span>
+                                </p>
+                            </td>
+                            <td width="13%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">严磊磊</span>
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">15129290752</span>
+                                </p>
+                            </td>
+                            <td width="12%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    荆小旭
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>17521300701</span>
+                                </p>
+                            </td>
+                            <td width="3%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                            <td width="7%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" style="margin-left:0cm;">
+                                    <b>周三</b>
+                                </p>
+                            </td>
+                            <td width="11%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">杨阳</span>
+                                </p>
+                            </td>
+                            <td width="14%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">13060321019</span>
+                                </p>
+                            </td>
+                            <td width="13%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">刘小燕</span>
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">18829292641</span>
+                                </p>
+                            </td>
+                            <td width="12%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    彭强
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>18182461663</span>
+                                </p>
+                            </td>
+                            <td width="3%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                            <td width="7%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" style="margin-left:0cm;">
+                                    <b>周四</b>
+                                </p>
+                            </td>
+                            <td width="11%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    王子豪
+                                </p>
+                            </td>
+                            <td width="14%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>18193836752</span>
+                                </p>
+                            </td>
+                            <td width="13%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">秦恒</span>
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span style="font-size:11.0pt;font-family:等线;color:black;">17709208179</span>
+                                </p>
+                            </td>
+                            <td width="12%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    杨佳琳
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>15691701792</span>
+                                </p>
+                            </td>
+                            <td width="3%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                            <td width="7%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="8%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" style="margin-left:0cm;">
+                                    <b>周五</b>
+                                </p>
+                            </td>
+                            <td width="11%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    范李婷
+                                </p>
+                            </td>
+                            <td width="14%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>15829722979</span>
+                                </p>
+                            </td>
+                            <td width="13%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    王栋
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>17719536653</span>
+                                </p>
+                            </td>
+                            <td width="12%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    成敬
+                                </p>
+                            </td>
+                            <td width="15%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>18393417365</span>
+                                </p>
+                            </td>
+                            <td width="3%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                            <td width="7%" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="margin-left:0cm;text-align:center;">
+                                    <span>/</span>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><b>
+                    <br>
+                </b>
+                <p></p>
+                <p class="MsoNormal">
+                    <br>
+                </p>
+                <p class="MsoNormal">
+                    <b>◆网络组<span></span></b>
+                </p>
+                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="792" style="width:396.0pt;border-collapse:collapse;">
+                    <tbody>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <span></span>
+                                </p>
+                            </td>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>姓名<span></span></b>
+                                </p>
+                            </td>
+                            <td width="206" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>电话<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>姓名<span></span></b>
+                                </p>
+                            </td>
+                            <td width="206" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>电话<span></span></b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <b>星期一<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    张振<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    15991738172
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    郑程建<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    15353707767
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <b>星期二<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    张书满<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    15619220526
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    范亚杰<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    13321230005
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <b>星期三<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    翟广宗<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    18700995506
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    郑维光<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    17502978565
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <b>星期四<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    付王鑫<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    17691070097
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    王晓飞<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    18892084793
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="96" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal">
+                                    <b>星期五<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    李森林<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    13096969405
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    马合山<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    15199110849
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>
+                    <br>
+                </p>
+                <p>
+                    <br>
+                </p>
+                <p class="MsoNormal">
+                    <b>◆设备联网组<span></span></b>
+                </p>
+                <p>
+                    <b>值班顺序<span></span></b>
+                </p>
+                <table class="MsoNormalTable ke-zeroborder" border="0" cellspacing="0" cellpadding="0" width="792" style="width:396.0pt;border-collapse:collapse;">
+                    <tbody>
+                        <tr>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>周内值班<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>姓名<span></span></b>
+                                </p>
+                            </td>
+                            <td width="206" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>电话<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>周末值班<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>姓名<span></span></b>
+                                </p>
+                            </td>
+                            <td width="206" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    <b>电话<span></span></b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr v-for="item in  shiftOrder">
+                            <td width="96" style="border:solid windowtext 1.0pt;text-align:center">
+                                <p class="MsoNormal">
+                                    <b>{{item.F_WeekInOrder}}<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    {{item.F_Name}}<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    {{item.F_Phone}}
+                                </p>
+                            </td>
+                            <td width="96" style="border: solid windowtext 1.0pt; text-align: center">
+                                <p class="MsoNormal">
+                                    <b>{{item.F_WeekOutOrder}}<span></span></b>
+                                </p>
+                            </td>
+                            <td width="142" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    {{item.F_WeekName}}<span></span>
+                                </p>
+                            </td>
+                            <td width="206" valign="bottom" style="border:solid windowtext 1.0pt;">
+                                <p class="MsoNormal" align="center" style="text-align:center;">
+                                    {{item.WeekPhone}}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @*<script src="~/Content/js/index.js"></script>
+        <script src="~/Content/js/indextab.js"></script>*@
+</div>
+<script>
+    $(function () {
+        $('#layout').layout();
+        treeView();
+        //gridList();
+    })
+    function treeView() {
+        $("#itemTree").treeview({
+            url: "/ShiftManage/DepartmentIT/GetTreeJson",
+            onnodeclick: function (i) {
+                $("#txt_keyword").val('');
+                $('#btn_search').trigger("click");
+                var as = $("#itemTree").getCurrentNode().img;
+                $('.bbit-tree-node').each(function () {
+                    $('.bbit-tree-node-anchor').attr("href", "../../" + as);
+                });
+            }
+        });
+    }
+    var vm = new Vue({
+        el: "#contentwrapper",
+        data() {
+            return {
+                tilte: "",
+                SaturdayDate: '',
+                Sunday: '',
+                weekShift: [],
+                showTime: '',
+                shiftOrder: [],
+            }
+        },
+        created: function () {
+            this.GetDetails();
+            this.GetShiftOrder();
+        },
+        methods: {
+            GetDetails: function () {
+                var _self = this;
+                _self.$http.get("/ShiftManage/ShiftShow/GetWeekWorking").then(
+                    function (response) {
+                        //successCallback
+                        this.weekShift = JSON.parse(response.bodyText);
+                        this.SaturdayDate = this.weekShift[0].F_Start;
+                        this.Sunday = this.weekShift[1].F_Start;
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            },
+            GetShiftOrder: function () {
+                var _self = this;
+                _self.$http.get("/ShiftManage/ShiftShow/GetShiftOrder").then(
+                    function (response) {
+                        //successCallback
+                        this.shiftOrder = JSON.parse(response.bodyText);
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            }
+        },
+    })
+
+</script>

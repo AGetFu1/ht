@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        //initControl();
+        if (!!keyValue) {
+            $.ajax({
+                url: "/ShiftManage/ShiftTableCS2/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form").formSerialize(data);
+                }
+            });
+        }
+    });
+    function submitForm() {
+        if (!$('#form').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/ShiftManage/ShiftTable/SubmitFormcs2?keyValue=" + keyValue,
+            param: $("#form").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    
+</script>
+
+<form id="form">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">组别</th>
+                <td class="formValue">
+                    <select id="F_Team" name="F_Team" class="form-control required">
+                        <option value="">==请选择组别==</option>
+                        <option value="生产组">生产组</option>
+                        <option value="质量组">质量组</option>
+                        <option value="测编工程">测编工程</option>
+                        <option value="平移工程">平移工程</option>
+                        <option value="后段工程">后段工程</option>
+                    </select>
+                    @*<select id="F_Team" name="F_Team" class="form-control required">
+                    </select>*@
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">姓名</th>
+                <td class="formValue">
+                    <input id="F_Name" name="F_Name" type="text" class="form-control required" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">联系方式</th>
+                <td class="formValue">
+                    <input id="F_Phone" name="F_Phone" type="text" class="form-control required" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">邮箱</th>
+                <td class="formValue">
+                    <input id="F_Email" name="F_Email" type="text" class="form-control required" />
+                </td>
+            </tr>          
+        </table>
+    </div>
+</form>

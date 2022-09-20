@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        //initControl();
+        $.ajax({
+            url: "/ShiftManage/TeamManager/GetFormJson",
+            data: { keyValue: keyValue },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $("#form1").formSerialize(data);
+                $("#form1").find('.form-control,select,input').attr('readonly', 'readonly');
+                $("#form1").find('div.ckbox label').attr('for', '');
+            }
+        });
+    });
+    function initControl() {
+        $("#F_OrganizeId").bindSelect({
+            url: "/ShiftManage/TeamManager/GetTreeSelectJson",
+        });
+    }
+</script>
+
+<form id="form1">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+
+            <tr>
+                <th class="formTitle">组别</th>
+                <td class="formValue">
+                    <input id="F_Team" name="F_Team" type="text" class="form-control required" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">备注</th>
+                <td class="formValue">
+                    <input id="F_Description" name="F_Description" type="text" class="form-control" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>

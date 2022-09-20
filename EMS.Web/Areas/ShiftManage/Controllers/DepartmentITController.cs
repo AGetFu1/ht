@@ -1,0 +1,175 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using EMS.Application.ShiftManage;
+using EMS.Code;
+using System.Web.Mvc;
+using EMS.Domain._03_Entity.ShiftManage;
+using EMS.Domain.Entity.SystemManage;
+
+namespace EMS.Web.Areas.ShiftManage.Controllers
+{
+    public class DepartmentITController : ControllerBase
+    {
+        private DepartmentITApp itemsApp = new DepartmentITApp();
+
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetTreeSelectJson()
+        {
+            var data = itemsApp.GetList1();
+            var treeList = new List<TreeSelectModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeSelectModel treeModel = new TreeSelectModel();
+                treeModel.id = item.F_Id;
+                treeModel.text = item.F_FullName;
+                treeModel.parentId = item.F_ParentId;
+                treeList.Add(treeModel);
+            }
+            return Content(treeList.TreeSelectJson());
+        }
+
+
+        public ActionResult GetGridJson(string itemId)
+        {
+            var data = itemsApp.GetList1(itemId);
+            return Content(data.ToJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetTreeJson()
+        {
+            OperatorModel operatorModel = new OperatorModel();
+            operatorModel = OperatorProvider.Provider.GetCurrent();
+            var data = itemsApp.GetList1();          
+            var treeList = new List<TreeViewModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeViewModel tree = new TreeViewModel();
+                bool hasChildren = data.Count(t => t.F_ParentId == item.F_Id) == 0 ? false : true;
+                tree.id = item.F_Id;
+                tree.text = item.F_FullName;
+                tree.value = item.F_EnCode;
+                tree.parentId = item.F_ParentId;
+                tree.img = item.F_UrlAddress;
+                tree.isexpand = true;
+                tree.complete = true;
+                tree.hasChildren = hasChildren;
+                treeList.Add(tree);
+            }
+            return Content(treeList.ToJson());
+        }
+        
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetTreeGridJson()
+        {
+            var data = itemsApp.GetList1();
+            var treeList = new List<TreeGridModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeGridModel treeModel = new TreeGridModel();
+                bool hasChildren = data.Count(t => t.F_ParentId == item.F_Id) == 0 ? false : true;
+                treeModel.id = item.F_Id;
+                treeModel.isLeaf = hasChildren;
+                treeModel.parentId = item.F_ParentId;
+                treeModel.expanded = hasChildren;
+                treeModel.entityJson = item.ToJson();
+                treeList.Add(treeModel);
+            }
+            return Content(treeList.TreeGridJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetFormJson(string keyValue)
+        {
+            var data = itemsApp.GetForm(keyValue);
+            return Content(data.ToJson());
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitForm(DepartmentITEntity itemsEntity,  string keyValue)
+        {
+            itemsApp.SubmitForm(itemsEntity, keyValue);
+            return Success("操作成功。");
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteForm(string keyValue)
+        {
+            itemsApp.DeleteForm(keyValue);
+            return Success("删除成功。");
+        }
+        //================================================测试二部================================================================================================================
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetTreeJsoncs2()
+        {
+            OperatorModel operatorModel = new OperatorModel();
+            operatorModel = OperatorProvider.Provider.GetCurrent();
+            var data = itemsApp.GetListcs2();
+            var treeList = new List<TreeViewModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeViewModel tree = new TreeViewModel();
+                bool hasChildren = data.Count(t => t.F_ParentId == item.F_Id) == 0 ? false : true;
+                tree.id = item.F_Id;
+                tree.text = item.F_FullName;
+                tree.value = item.F_EnCode;
+                tree.parentId = item.F_ParentId;
+                tree.img = item.F_UrlAddress;
+                tree.isexpand = true;
+                tree.complete = true;
+                tree.hasChildren = hasChildren;
+                treeList.Add(tree);
+            }
+            return Content(treeList.ToJson());
+        }
+        //=======================================================================
+        public ActionResult GetTreezz1Json()
+        {
+            OperatorModel operatorModel = new OperatorModel();
+            operatorModel = OperatorProvider.Provider.GetCurrent();
+            var data = itemsApp.GetListzz1();
+            var treeList = new List<TreeViewModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeViewModel tree = new TreeViewModel();
+                bool hasChildren = data.Count(t => t.F_ParentId == item.F_Id) == 0 ? false : true;
+                tree.id = item.F_Id;
+                tree.text = item.F_FullName;
+                tree.value = item.F_EnCode;
+                tree.parentId = item.F_ParentId;
+                tree.img = item.F_UrlAddress;
+                tree.isexpand = true;
+                tree.complete = true;
+                tree.hasChildren = hasChildren;
+                treeList.Add(tree);
+            }
+            return Content(treeList.ToJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult GetTreeGridzz1Json()
+        {
+            var data = itemsApp.GetListzz1();
+            var treeList = new List<TreeGridModel>();
+            foreach (DepartmentITEntity item in data)
+            {
+                TreeGridModel treeModel = new TreeGridModel();
+                bool hasChildren = data.Count(t => t.F_ParentId == item.F_Id) == 0 ? false : true;
+                treeModel.id = item.F_Id;
+                treeModel.isLeaf = hasChildren;
+                treeModel.parentId = item.F_ParentId;
+                treeModel.expanded = hasChildren;
+                treeModel.entityJson = item.ToJson();
+                treeList.Add(treeModel);
+            }
+            return Content(treeList.TreeGridJson());
+        }
+    }
+}

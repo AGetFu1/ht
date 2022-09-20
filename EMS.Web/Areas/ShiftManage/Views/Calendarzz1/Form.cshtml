@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<!DOCTYPE>
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+<link rel="stylesheet" href="~/Content/ElementUI/element-ui.css" />
+<script src="~/Scripts/ElementUI/element-ui.js"></script>
+<script>Vue.config.productionTip = false</script>
+@*<script>
+            //var keyValue = $.request("keyValue");
+            //$(function () {
+            //    initControl();
+            //    if (!!keyValue) {
+            //        $.ajax({
+            //            url: "/ShiftManage/Calendarzz1/GetFormJson",
+            //            data: { keyValue: keyValue },
+            //            dataType: "json",
+            //            async: false,
+            //            success: function (data) {
+            //                $("#form1").formSerialize(data);
+            //            }
+            //        });
+            //    }
+            //});
+            //function initControl() {
+            //    $("#F_Text").bindSelect({
+            //        url: "/ShiftManage/ShiftTable/GetGridJson",
+            //        id: "F_Name",
+            //        text: "F_Name"
+            //    });
+                //$("#F_Phone").bindSelect({
+                //    url: "/ShiftManage/ShiftTable/GetGridJson",
+                //    id: "F_Id",
+                //    text: "F_Phone"
+                //});
+            }
+            function submitForm() {
+                if (!$('#form1').formValid()) {
+                    return false;
+                }
+                $.submitForm({
+                    url: "/ShiftManage/Calendarzz1/SubmitForm?keyValue=" + keyValue,
+                    param: $("#form1").formSerialize(),
+                    success: function () {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                })
+            }
+            //function submitForm111() {
+            //    if (!$('#form1').formValid()) {
+            //        return false;
+            //    }
+            //    var postData = $("form1").formSerialize();
+            //    postData["keyValue"] = keyValue;
+            //    $.submitForm({
+            //        url: "/ShiftManage/Calendar/Scheduling?keyValue=" + keyValue,
+            //        param: postData,
+            //        success: function () {
+            //            $.currentWindow().$("#gridList").trigger("reloadGrid");
+            //        }
+            //    })
+            //}
+            //function setPhone(a, b) {
+            //    var va, vb;
+            //    va = a.value;
+            //    vb = b.value;
+            //    b.length = 1;
+            //    if (va == '0') return;
+            //    $.ajax({
+            //        url: "/ShiftManage/ShiftTable/GetGridJson",
+            //        dataType: "json",
+            //        async: false,
+            //        success: function (data) {
+            //            debugger;
+            //            for (var i = 0; i < data.length; i++) {
+            //                if (typeof (data[i]) == 'undefined') return;
+            //                if (va == data[i].F_Id) {
+            //                    b.options = new Option();
+            //                    b.options.text = data[i].F_Phone;
+            //                    b.options.value = data[i].F_Id;
+            //                }
+            //            }
+            //        }
+            //    });
+
+
+
+
+            //}
+    </script>*@
+<el-form-item>
+    <form id="form1">
+        <div id="app" style="padding-top: 20px; margin-right: 20px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">组别</th>
+                    <td class="formValue">
+                        <select id="F_Team" v-model:value='team' v-on:change="change" class="form-control required">
+                            <option value="">==请选择组别==</option>
+                            <option value="减划组">减划组</option>
+                            <option value="上芯组">上芯组</option>
+                            <option value="压焊组">压焊组</option>
+                            <option value="切割组">切割组</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">姓名</th>
+                    <td class="formValue">
+                        <select id="F_Text" class="form-control required">
+                            <option v-for="item in getinWeekModel">{{item.F_Name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">主题</th>
+                    <td class="formValue">
+                        <select id="F_Title" name="F_Title" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="周内值班">周内值班</option>
+                            <option value="周末值班">周末值班</option>
+                            <option value="假日值班">假日值班</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">值班日期</th>
+                    <td class="formValue">
+                        <input id="F_Start" name="F_Start" autocomplete="off" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</el-form-item>
+<script type="text/javascript">
+    var keyValue = $.request("keyValue");
+    //$(function () {
+    //            initControl();
+    //            if (!!keyValue) {
+    //                $.ajax({
+    //                    url: "/ShiftManage/Calendarzz1/GetFormJson",
+    //                    data: { keyValue: keyValue },
+    //                    dataType: "json",
+    //                    async: false,
+    //                    success: function (data) {
+    //                        $("#form1").formSerialize(data);
+    //                    }
+    //                });
+    //            }
+    //        });
+    //        function initControl() {
+    //            $("#F_Text").bindSelect({
+    //                url: "/ShiftManage/ShiftTable/GetGridJson",
+    //                id: "F_Name",
+    //                text: "F_Name"
+    //            });
+    //            $("#F_Phone").bindSelect({
+    //                url: "/ShiftManage/ShiftTable/GetGridJson",
+    //                id: "F_Id",
+    //                text: "F_Phone"
+    //            });
+    //        }
+    //}
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/ShiftManage/Calendarzz1/SubmitForm?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    Vue.config.productionTip = false;
+    new Vue({
+        el: '#app',
+        data: {
+            team: [],
+            getinWeekModel: [],
+            aitem: "",
+        },
+        created: function () {
+            this.GetDetails();
+            //this.GetShiftOrder();
+        },
+        methods: {
+            change(e) {
+                console.log(e.target.value)
+                this.aitem = e.target.value;
+                var _self = this;
+                _self.$http.get("/ShiftManage/ShiftTable/GetGridzz1Json", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+                        console.log(response.body)
+                        this.getinWeekModel = response.body;
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            },
+            GetDetails: function (val) {
+                var _self = this;
+
+                _self.$http.get("/ShiftManage/ShiftTable/GetGridzz1Json", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+
+                        this.getinWeekModel = JSON.parse(response.bodyText);
+
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            }
+
+        }
+    })
+
+</script>

@@ -1,0 +1,103 @@
+﻿using EMS.Application.ShiftManage;
+using EMS.Code;
+using EMS.Code.Excel;
+using EMS.Domain.Entity.ShiftManage;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Text;
+using EMS.Code.Ftp;
+namespace EMS.Web.Areas.ShiftManage.Controllers
+{    public class FileListTableController : ControllerBase
+    {
+        FileListTableApp fileListTableApp = new FileListTableApp();
+        [HttpGet]
+        public ActionResult UpLoadFile()
+        {
+            return View();
+        }
+        public ActionResult GetGridJson()
+        {
+            var data = fileListTableApp.getListJson();
+            return Content(data.ToJson());
+        }
+
+       
+        [HandlerAjaxOnly]
+        public ActionResult GetFormJson(string keyValue)
+        {
+            var data = fileListTableApp.GetForm(keyValue);
+            return Content(data.ToJson());
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [HandlerAuthorize]
+        public ActionResult SubmitForm(FileListTableEntity fileListTableEntity, string keyValue)
+        {
+                  
+            fileListTableApp.SubmitForm(fileListTableEntity, keyValue);
+            return Success("操作成功。");
+        }
+        public ActionResult Form()
+        {
+            return View();
+        }
+        public ActionResult UploadFileJson()
+        {
+            //var msg = "";
+            HttpFileCollectionBase files = Request.Files;
+            HttpPostedFileBase file1 = files["file"];
+            if (file1 != null)
+            {
+                string fileType = Path.GetExtension(file1.FileName);
+                DateTime dt = DateTime.Now;
+                var date = Common.CreateNo();                        
+                string gy ="压焊" ;
+                string name = Path.GetFileNameWithoutExtension(file1.FileName);                
+                string fileName = date  + gy + name;
+                string directory = "~/upload/file/";
+                //const string directory =" ";
+                var filePath = Server.MapPath(directory + fileName + fileType);
+                if (!Directory.Exists(Server.MapPath(directory)))
+                    Directory.CreateDirectory(Server.MapPath(directory));
+                file1.SaveAs(filePath);
+               
+                //List<FileListTableEntity> listModel = new List<FileListTableEntity>();
+                FileListTableEntity fileListTableEntity = new FileListTableEntity();
+                fileListTableEntity.F_UseName = EMS.Code.OperatorProvider.Provider.GetCurrent().UserName;
+                fileListTableEntity.F_FileName = fileName;
+                fileListTableEntity.F_Date = DateTime.Now;
+                fileListTableEntity.F_GongXv = "压焊";
+                fileListTableEntity.F_Type = fileType;
+                fileListTableEntity.F_Address = directory;
+                fileListTableApp.SubmitForm(fileListTableEntity);
+                //fileListTableEntity.Create();
+                //FileInfo file = new FileInfo(filePath);//指定文件路径     
+            }
+            return Success("插入成功");
+                     
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [HandlerAuthorize]
+        public ActionResult DeleteForm(string keyValue)
+        {
+            fileListTableApp.DeleteForm(keyValue);
+            return Success("删除成功。");
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [HandlerAuthorize]
+        
+        [HttpGet]
+        public ActionResult download(string keyValue)
+        {
+            fileListTableApp.download(keyValue);
+            return Success("下载成功");
+        }
+    }
+}

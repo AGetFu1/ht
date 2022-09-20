@@ -1,0 +1,122 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+@*<meta charset="utf-8">
+    <title>文件上传</title>
+
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/Content/js/UEditor/lang/zh-cn/zh-cn.js"></script>*@
+<!DOCTYPE html>
+
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+    <link rel="stylesheet" href="~/Content/layui/css/layui.css">
+    <link rel="stylesheet" type="../text/css" href="static/admin/css/admin.css" />
+    <script type="text/javascript"></script>
+</head>
+<body style="height:100%">
+    <div class="wrap-container clearfix">
+        <div class="column-content-detail">
+            <blockquote class="layui-elem-quote quoteBox">
+                <form class="layui-form" id="searchFrom">
+                    <div class="layui-upload layui-inline">
+                        <button type="button" class="layui-btn layui-btn-warm" id="test3"><i class="layui-icon"></i>上传文件</button>
+                    </div>
+                </form>
+            </blockquote>
+
+            <table class="layui-table" id="test" lay-filter="demo"></table>
+        </div>
+
+    </div>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="do">下载</a>
+    </script>
+    <script src="../layui/layui.js" charset="utf-8"></script>
+    <script src="../js/jquery-3.3.1.min.js" charset="utf-8"></script>
+    <script>
+        layui.use(['table', 'jquery'], function () {
+            var $ = layui.$ //重点处
+            var table = layui.table
+                , form = layui.form;
+            table.render({
+                elem: '#test'
+                , url: '../loadFile'   //替换成自己的后台查询文件列表服务
+                , title: '文件列表'
+                , page: true
+                , skin: 'row'
+                , even: true
+                , limit: 10  //如果要改变分页的限制，则使用此参数
+                , cols: [[
+                    { field: 'fileId', width: 150, title: '文件编号', sort: true }
+                    , { field: 'fileName', width: 200, title: '文件名称' }
+                    , { field: 'filePath', width: 280, title: '文件路径' }
+                    , { field: 'fileType', width: 120, title: '文件类型' } //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , { field: 'fileSize', width: 120, title: '文件大小' }
+                    , { field: 'uploadUser', width: 120, title: '作者' }
+                    , { width: 140, align: 'center', toolbar: '#barDemo', title: '操作' }
+                ]]
+            }
+                    //头工具栏事件
+                   table.on('tool(demo)', function (obj) {
+                var data = obj.data;
+                switch (obj.event) {
+                    case 'do':
+                        window.location.href = "../downloadFile?filePath=" + data.path; //文化保存路径
+                        break;
+                    case 'look':
+                        break;
+                };
+            });
+        });
+
+        //上传指定格式文件
+        upload.render({
+            elem: '#test3'
+            , url: '../upload'  //改成您自己的上传接口
+            , accept: 'file' //普通文件
+            , exts: rar | jar | zip //只允许上传压缩文件
+            , size: 4000  //限制文件大小，单位 KB
+            , before: function (obj) {
+                layer.load(1, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    , content: '上传中...',
+                    success: function (layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding-top': '39px',
+                            'width': '60px'
+                        });
+                    }
+                });
+            }
+            , done: function (res) {
+                layer.closeAll('loading');
+                setTimeout(function () {
+                    layer.msg('上传成功!');
+                }, 500);
+                table.reload('test', {
+                    page: {
+                        curr: 1,  //重新从第 1 页开始
+                    },
+                    where: {  //携带参数
+                        fileType: null   //这种写法应该比较简洁了
+                    }
+                    , method: 'post'
+                });
+                console.log(res)
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

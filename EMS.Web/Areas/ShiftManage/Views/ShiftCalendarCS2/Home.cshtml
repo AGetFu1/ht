@@ -1,0 +1,388 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+@*<script src="~/Content/js/datepicker/WdatePicker.js"></script>*@
+
+<link href='~/Content/calendar/css/fullcalendar.css' rel='stylesheet' />
+<link href='~/Content/calendar/css/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='~/Content/calendar/js/moment.min.js'></script>
+<script src='~/Content/calendar/js/fullcalendar.js'></script>
+<script src="~/Content/calendar/js/locale/zh-cn.js"></script>
+<script src="~/Content/calendar/layer/layer.js"></script>
+
+<style>
+    body {
+        padding: 0;
+        font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+       
+    }
+
+    #calendar {
+        max-width: 1100px;
+        margin: 0 auto;
+        overflow-x: auto;
+    }
+
+    #box {
+        display: none;
+    }
+
+    .form-inline {
+        padding: 20px;
+    }
+
+    .select {
+        display: block;
+        width: 100%;
+        padding: 5px 0;
+        margin-bottom: 20px;
+    }
+
+    .label-success {
+        background-color: #82af6f;
+    }
+
+    .label-danger {
+        background-color: #d15b47;
+    }
+
+    .hover-end {
+        padding: 0;
+        margin: 0;
+        font-size: 75%;
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        opacity: .8
+    }
+</style>
+<div class="ui-layout" id="layout" style="height: 100%; width: 100%;">
+    <div class="ui-layout-west">
+        <div id="itemTree"></div>
+    </div>
+    <div class="ui-layout-center">
+        <div id='calendar'></div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#layout').layout();
+        treeView();
+        //gridList();
+    })
+    function treeView() {
+        $("#itemTree").treeview({
+            url: "/ShiftManage/DepartmentIT/GetTreeJsoncs2",
+            onnodeclick: function (i) {
+                $("#txt_keyword").val('');
+                $('#btn_search').trigger("click");
+                var as = $("#itemTree").getCurrentNode().img;
+                $('.bbit-tree-node').each(function () {
+                    $('.bbit-tree-node-anchor').attr("href", "../../" + as);
+                });
+            }
+        });
+    }
+    $box = $('#box');
+    $calendar = $('#calendar');
+    $calendar.fullCalendar('destroy');
+
+    var calendar = $calendar.fullCalendar({
+        header: {
+            left: 'month,agendaDay',
+            center: 'title',
+            right: 'prev,next today'
+        },
+        buttoTnext: {
+            today: '今天'
+        },
+        locale: 'zh-cn',
+        defaultView: "month", // basicWeek listWeek agendaWeek
+        weekMode: 'liquid',
+        // weekNumbers: true,
+        // height: 'auto',
+        timeFormat: 'HH:mm',
+        navLinks: true,       // can click day/week names to navigate views
+        eventLimit: 5,        // 限制一天中显示的事件数，默认false
+        allDayText: '排班',   // 日历上显示全天的文本
+        selectable: true,     // 允许用户通过单击或拖动选择日历中的对象，包括天和时间。
+        selectHelper: false,  // 当点击或拖动选择时间时，显示默认加载的提示信息，该属性只在周/天视图里可用。
+        unselectAuto: true,   // 当点击页面日历以外的位置时，自动取消当前的选中状态。
+        eventBackgroundColor: '#3a87ad',    // 设置日程事件的背景色
+        events: events,
+        select: select,
+        month: true,
+        eventClick: eventClick,
+        contentHeight: "100%",
+        contentWeight: "100%",
+        eventMouseover: eventMouseover,
+        eventMouseout: eventMouSEOut
+    });
+
+    function eventMouseover(event, view) {
+
+        $(this).attr('title', event.title);
+        //$('.fc-title', this).append('<span id=\"' + event.id + '\"  class=\"hover-end\">' + event.title + '</span>');
+    }
+    function eventMouSEOut(event, view) {
+
+    }
+    function events(start, end, timezone, callback) {
+        var events = [];
+        $.ajax({
+            url: "/ShiftManage/CalendarCS2/GetJson",
+            type: "get",
+            dataType: "json",
+            async: false,
+            data: {},
+            success: function (data) {
+                //console.log(data);
+                var val = {};
+                $.each(data, function (i, data) {
+                    var start = new Date(data.F_Start);
+                    var end = new Date(data.F_End);
+                    //var dayS = $.fullCalendar.formatDate(start, "yyyy-MM-dd");
+                    //var dayE = $.fullCalendar.formatDate(end, "yyyy-MM-dd");
+                    var dayS = getDate(start);
+                    var dayE = getDate(end);
+                    val = {
+                        "allDay": false,
+                        "backgroundColor": data.F_Backgroudcolor,
+                        "id": data.F_Id,
+                        "start": dayS,
+                        "text": data.F_Text,
+                        "end": dayE,
+                        "title": data.F_Team + '-' + data.F_Text + '-' + data.F_Phone
+                    }
+                    events.push(val);
+                     //console.log("val",val);
+                });
+                //console.log("events", events);
+                callback(events);
+            }
+        });
+    }
+    function CurentTime() {
+        var now = new Date();
+
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+
+        new Date().getFullYear() + '-' + new Date().getMonth() + '-' + new Date().getDay()
+        var clock = year + "-";
+
+        if (month < 10)
+            clock += "0";
+
+        clock += month + "-";
+
+        if (day < 10)
+            clock += "0";
+
+        //console.log(clock);
+        return (clock);
+    }
+    //将数据库的时间戳转成 *年*月*日 字符串
+    function getDate(DBTime) {
+        var date = new Date(DBTime);
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var dateStr;
+        if (month < 10 && day < 10) {
+            dateStr = year + "-0" + month + "-0" + day;
+        } else if (month < 10 && day >= 10) {
+            dateStr = year + "-0" + month + "-" + day;
+        } else if (month >= 10 && day < 10) {
+            dateStr = year + "-" + month + "-0" + day;
+        } else if (month >= 10 && day >= 10) {
+            dateStr = year + "-" + month + "-" + day;
+        }
+        return dateStr;
+    }
+    // 添加排班
+    function select(start, end, allDay) {
+        layer.open({
+            type: 1,
+            shade: false,
+            content: $box,
+            title: '选择班次',
+            btn: ['确认', '关闭'],
+            btn1: function () {
+                layer.closeAll();
+            },
+            yes: addCallback
+        });
+
+        // 添加排班 - 弹窗回调
+        function addCallback() {
+            var bgColor = $box.find("input[name=code]:checked").val();
+            var title = $box.find("input[name=code]:checked").next().text();
+            var text = $box.find("option:selected").text();
+
+            var json = {
+                title: text + ' - ' + title,
+                text: text,
+                allDay: allDay,
+                backgroundColor: bgColor,
+                start: start.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD')
+            };
+            //console.log("json", json);
+            //$.ajax({
+            //    url: '/ShiftManage/Calendar/SubmitForm ',
+            //    data: {
+            //        calendarEntity: json
+            //    },
+            //    contentType: false,
+            //    dataType: 'json',
+            //    type: 'post',
+            //    success: function (result) { // 获取当前月的数据
+            //        console.log(result);
+            //        if (result.success) {
+            //            $('#calendar').fullCalendar('renderEvent', json, true);// 添加日历
+            //            $('#calendar').fullCalendar('refetchEvents');
+            //            $("#addObjcectInputModalEdit").modal("hide");//隐藏弹出框
+            //        }
+            //    }
+            //});
+            $('#calendar').fullCalendar('renderEvent', json, true);// 添加日历
+
+            // 添加排班 post
+            function addEvent(data) {
+                if (data.title == null || data.title == '') {
+                    return false;
+                }
+                if (checkStr(data.title) == false) {
+                    alert("请不要输入非法字符！");
+                    return;
+                }
+
+                $.post("Canlendar/postEvent", data, function (data) {
+                    calendar.fullCalendar('renderEvent', json, true); // 添加日历
+                }, "json");
+            }
+
+            layer.closeAll();
+        }
+
+        calendar.fullCalendar('unselect');
+    }
+
+
+    // 更新排班
+    function eventClick(calEvent, jsEvent, view) {
+        var code = calEvent.backgroundColor;
+        var form = [];
+        form.push("<form class='form-inline'>");
+        form.push(" <select name='username' class='select'>");
+        form.push("  <option value='1' " + (calEvent.text == '张三' ? 'selected' : calEvent.text) + ">张三</option>");
+        form.push(" </select>");
+        form.push(" <div class='radios'>");
+        form.push("  <label class='label_canlendar'><input type='radio' value='#3a87ad' name='code' " + (code == '#3a87ad' ? 'checked' : '') + "><span class='classes'style='color:#3a87ad'>早班</span></label>");
+        form.push("  <label class='label_canlendar'><input type='radio' value='#82af6f' name='code' " + (code == '#82af6f' ? 'checked' : '') + "><span class='classes'style='color:#82af6f'>中班</span></label>");
+        form.push("  <label class='label_canlendar'><input type='radio' value='#d15b47' name='code' " + (code == '#d15b47' ? 'checked' : '') + "><span class='classes'style='color:#d15b47'>晚班</span></label>");
+        form.push(" </div>");
+        form.push("</form>");
+        $box.html(form.join(''));
+
+        layer.open({
+            type: 1,
+            shade: false,
+            title: '当前班次：' + calEvent.title,
+            content: $box,
+            btn: ['确认', '删除', '关闭'],
+            btn2: function () {
+                delEvent(calEvent.id);// 删除排班
+
+                layer.closeAll();
+            },
+            btn3: function () {
+                layer.closeAll();
+            },
+            yes: updateCallback
+        });
+
+        // 更新排班 - 弹窗回调
+        function updateCallback() {
+            var bgColor = $box.find("input[name=code]:checked").val();
+            var title = $box.find("input[name=code]:checked").next().text();
+            var text = $box.find("option:selected").text();
+
+            calEvent.title = text + ' - ' + title;
+            calEvent.text = text;
+            calEvent.backgroundColor = bgColor;
+
+            // test
+            calendar.fullCalendar('updateEvent', calEvent); // 更新日历
+
+            // 更新排班 post
+            function editEvent(calEvent) {
+                if (calEvent.title == null || calEvent.title == '') {
+                    return false;
+                }
+                if (checkStr(calEvent.title) == false) {
+                    alert("请不要输入非法字符！");
+                    return;
+                }
+
+                $.post("Canlendar/postEvent", {
+                    id: calEvent.id,
+                    allDay: calEvent.allDay,
+                    title: calEvent.title,
+                    start: calEvent.start,
+                    end: calEvent.end,
+                    backgroundColor: calEvent.backgroundColor
+                }, function (data) {
+                    calendar.fullCalendar('updateEvent', calEvent); // 更新日历
+                }, "json");
+            }
+
+            layer.closeAll();
+        }
+    }
+
+
+    // 删除排班
+    function delEvent(id) {
+        $.ajax({
+            url: '/ShiftManage/Calendar/DeleteForm',
+            data: {
+                keyValue: id,
+            },
+            dataType: 'json',
+            type: 'post',
+            success: function (result) {
+                //console.log(result);
+                calendar.fullCalendar("removeEvents", id); // 删除日历
+            }
+            //$.post("Canlendar/delEvent", {id: id}, function(data) {
+            //calendar.fullCalendar("removeEvents", calEvent._id); // 删除日历
+            //alert('删除成功');
+            //});
+        })
+    }
+    // 是否全天
+    function getAllDay(start, end) {
+        var start_his = start.indexOf("00:00:00");
+        var end_his = end.indexOf("00:00:00");
+        if (start_his == -1 || end_his == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 非法字符
+    function checkStr(str) {
+        var pattern = /[~#^$%&!*'"]/gi;
+        if (pattern.test(str)) {
+            return false;
+        }
+        return true;
+    }
+</script>
+

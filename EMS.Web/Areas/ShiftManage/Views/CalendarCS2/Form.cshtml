@@ -1,0 +1,151 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+<link rel="stylesheet" href="~/Content/ElementUI/element-ui.css" />
+<script src="~/Scripts/ElementUI/element-ui.js"></script>
+<style>
+    .el-input__inner {
+        height: 34px;
+        width: 280%;
+    }
+</style>
+<el-form-item>
+    <form id="form1">
+        <div id="app" style="padding-top: 20px; margin-right: 20px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">组别</th>
+                    <td class="formValue">
+                        <select id="F_Team" v-model:value='team' v-on:change="change" class="form-control required">
+                            <option value="">==请选择组别==</option>
+                            <option value="生产组">生产组</option>
+                            <option value="质量组">质量组</option>
+                            <option value="测编工程">测编工程</option>
+                            <option value="平移工程">平移工程</option>
+                            <option value="后段工程">后段工程</option>
+                            @*<option v-for="i in team">{{i}}</option>*@
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">姓名</th>
+                    <td class="formValue">
+                        <select id="F_Text"  class="form-control required">
+                            <option v-for="item in getinWeekModel">{{item.F_Name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">主题</th>
+                    <td class="formValue">
+                        <select id="F_Title" name="F_Title" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="周内值班">周内值班</option>
+                            <option value="周末值班">周末值班</option>                          
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">值班日期</th>
+                    <td class="formValue">
+                        <el-date-picker type="dates" id="F_Start" 
+                                        v-model:value="dates" 
+                                        placeholder="选择一个或多个日期">
+                        </el-date-picker >
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</el-form-item>
+<script type="text/javascript">
+    
+    $(function () {
+        //initControl();
+        if (!!keyValue) {
+            $.ajax({
+                url: "/ShiftManage/CalendarCS2/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+    var keyValue = $.request("keyValue");
+    function submitForm() {
+        console.log(keyValue)
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/ShiftManage/CalendarCS2/SubmitForm?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    Vue.config.productionTip = false;
+    new Vue({
+        el: '#app',
+        data: {
+            team: [],
+            getinWeekModel: [],
+            aitem: "",
+            dates:[]
+        },
+        created: function () {
+            this.GetDetails();
+            //this.GetShiftOrder();
+        },
+        methods: {
+            change(e) {
+                
+                this.aitem = e.target.value;
+                //this.value4 = e.target.value;
+                var _self = this;
+                _self.$http.get("/ShiftManage/ShiftTableCS2/GetGridJson", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+                        //console.log(response)
+                        //console.log(response.body)
+                        this.getinWeekModel = response.body;
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            },
+            GetDetails: function (val) {
+                var _self = this;
+                
+                _self.$http.get("/ShiftManage/ShiftTableCS2/GetGridJson", { params: { val: this.aitem } }).then(
+                    function (response) {
+                        //successCallback
+
+                        this.getinWeekModel = JSON.parse(response.bodyText);
+
+                        if (response.data.Code == 500) {
+                        }
+                        else {
+                        }
+                    }
+                ).catch(function (response) {
+                    console.log("400", response);
+                });
+            }
+
+        }
+    })
+
+</script>
+

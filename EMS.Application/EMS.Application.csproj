@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F2035EE2-B73D-4FB8-A433-CAB465DE6A2A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EMS.Application</RootNamespace>
+    <AssemblyName>EMS.Application</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Elasticsearch.Net, Version=7.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Elasticsearch.Net.7.10.0\lib\net461\Elasticsearch.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Nest, Version=7.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <HintPath>..\packages\NEST.7.10.0\lib\net461\Nest.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="01 Infrastructure\DbLogType.cs" />
+    <Compile Include="ExceptionManage\CommentApp.cs" />
+    <Compile Include="ExceptionManage\ESProvider.cs" />
+    <Compile Include="ExceptionManage\Setting.cs" />
+    <Compile Include="ExceptionManage\SysExptDetailApp.cs" />
+    <Compile Include="ExceptionManage\SysExptItemApp.cs" />
+    <Compile Include="ExceptionManage\SysFlowApp.cs" />
+    <Compile Include="LogManage\OperationLogApp.cs" />
+    <Compile Include="LogManage\SysLogApp.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShiftManage\CalendarApp.cs" />
+    <Compile Include="ShiftManage\DepartmentITApp.cs" />
+    <Compile Include="ShiftManage\FileListTableApp.cs" />
+    <Compile Include="ShiftManage\ShiftTableApp.cs" />
+    <Compile Include="ShiftManage\FileItemApp.cs" />
+    <Compile Include="ShiftManage\TeamManageApp.cs" />
+    <Compile Include="SystemManage\ItemsApp.cs" />
+    <Compile Include="SystemManage\ItemsDetailApp.cs" />
+    <Compile Include="SystemManage\ModuleApp.cs" />
+    <Compile Include="SystemManage\ModuleButtonApp.cs" />
+    <Compile Include="SystemManage\AreaApp.cs" />
+    <Compile Include="SystemManage\OrganizeApp.cs" />
+    <Compile Include="SystemManage\RoleApp.cs" />
+    <Compile Include="SystemManage\UserApp.cs" />
+    <Compile Include="SystemManage\UserLogOnApp.cs" />
+    <Compile Include="SystemManage\DutyApp.cs" />
+    <Compile Include="SystemManage\RoleAuthorizeApp.cs" />
+    <Compile Include="SystemSecurity\DbBackupApp.cs" />
+    <Compile Include="SystemSecurity\FilterIPApp.cs" />
+    <Compile Include="SystemSecurity\LogApp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EMS.Code\EMS.Code.csproj">
+      <Project>{db19ce03-c307-43fe-a209-08aa4ae10e21}</Project>
+      <Name>EMS.Code</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EMS.Data\EMS.Data.csproj">
+      <Project>{f71003e8-a836-48f4-9df6-df9095cebd18}</Project>
+      <Name>EMS.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EMS.Domain\EMS.Domain.csproj">
+      <Project>{7dc886cd-b8a0-44e8-aadd-57fcb0cfecb8}</Project>
+      <Name>EMS.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EMS.Mapping\EMS.Mapping.csproj">
+      <Project>{4e642cbe-f6c5-4cb9-9474-6b349652fe77}</Project>
+      <Name>EMS.Mapping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EMS.Repository\EMS.Repository.csproj">
+      <Project>{875233bf-ea15-49e0-9a9c-77884a897ff6}</Project>
+      <Name>EMS.Repository</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

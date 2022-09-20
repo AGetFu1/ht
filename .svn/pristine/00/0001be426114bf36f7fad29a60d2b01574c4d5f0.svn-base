@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+<script>
+    $(function () {
+        $('#layout').layout();
+        treeView();
+        gridList();
+    });
+    function treeView() {
+        $("#itemTree").treeview({
+            url: "/FileManage/FileItem/GetTreeJson",
+            onnodeclick: function (item) {
+                $("#txt_keyword").val('');
+                $('#btn_search').trigger("click");
+            }
+        });
+    }
+    //function gridList() {
+    //    var $gridList = $("#gridList");
+    //    $gridList.dataGrid({
+    //        height: $(window).height() - 96,
+    //        colModel: [
+    //            { label: "主键", name: "F_Id", hidden: true, key: true },
+    //            {
+    //                label: '标题', name: 'F_ItemName', width: 350, align: 'left',
+    //                formatter: function (value, row, index) {
+    //                    // console.log(row);
+    //                    return '<a href="javascript:btn_details_href(\'' + row.rowId + '\')">' + value + '</a>';
+    //                }
+
+    //            },
+    //            { label: '编号', name: 'F_ItemCode', width: 90, align: 'left' },
+    //            {
+    //                label: "默认", name: "F_IsDefault", width: 60, align: "center",
+    //                formatter: function (cellvalue) {
+    //                    return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+    //                }
+    //            },
+    //            {
+    //                label: '创建时间', name: 'F_CreatorTime', width: 120, align: 'left',
+    //                formatter: "date", formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }
+    //            },
+    //            {
+    //                label: "有效", name: "F_EnabledMark", width: 80, align: "center",
+    //                formatter: function (cellvalue) {
+    //                    return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+    //                }
+    //            },
+    //            {
+    //                label: "操作", name: "F_Description", index: "F_Description", width: 200, align: "centor", sortable: false,
+    //                formatter: function (value, row, index) {
+    //                    return '<a href="javascript:btn_details_href(\'' + row.rowId + '\')">详情</a>';
+    //                }
+    //            }
+    //        ],
+    //        pager: "#gridPager",
+    //        sortname: 'F_SortCode desc',
+    //        viewrecords: true
+    //    });
+    //    $("#btn_search").click(function () {
+    //        console.log($("#itemTree").getCurrentNode().id);
+    //        $gridList.jqGrid('setGridParam', {
+    //            url: "/ExceptionManage/ExceptionPackage/GetGridJson",
+    //            postData: { itemId: $("#itemTree").getCurrentNode().id, keyword: $("#txt_keyword").val() },
+    //        }).trigger('reloadGrid');
+    //    });
+    //}
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/FileManage/FileListTable/GetGridJson",
+            height: $(window).height() - 96,
+            colModel: [
+                { label: '主键', name: 'F_Id', hidden: true },
+                { label: '上传人', name: 'F_UseName', width: 100, align: 'left' },
+                { label: '文件名', name: 'F_FileName', width: 300, align: 'left' },
+                { label: '文件类型', name: 'F_Type', width: 150, align: 'left' },
+                { label: '工序', name: 'F_GongXv', width: 100, align: 'left' },
+                { label: '上传日期', name: 'F_Date', width: 130, align: 'left' },
+                {
+                    label: "操作", name: "F_Description", index: "F_Description", width: 100, align: "centor", sortable: false,
+                    formatter: function (value, row, index) {
+
+                        return '<a download  href="javascript:download(\'' + index.F_Id + '\')">下载</a>';
+                    }
+                },
+                {
+                    label: "", name: "F_Description", index: "F_Description", width: 100, align: "centor", sortable: false,
+                    formatter: function (value, row, index) {
+
+                        return '<a   href="javascript:onlineview(\'' + index.F_Id + '\')">预览</a>';
+                    }
+                },
+            ],
+            pager: "#gridPager",
+            sortname: 'F_Date desc',
+            viewrecords: true
+        });
+        $("#btn_search").click(function () {
+            var queryJson = {
+                keyword: $("#txt_keyword").val()
+            }
+            $gridList.jqGrid('setGridParam', {
+                postData: { queryJson: JSON.stringify(queryJson) },
+            }).trigger('reloadGrid');
+        });
+
+        $("#btn_search").click(function () {
+            console.log($("#itemTree").getCurrentNode().id);
+            $gridList.jqGrid('setGridParam', {
+                url: "/ExceptionManage/ExceptionPackage/GetGridJson",
+                postData: { itemId: $("#itemTree").getCurrentNode().id, keyword: $("#txt_keyword").val() },
+            }).trigger('reloadGrid');
+        });
+    }
+    function upload() {
+
+        $.modalOpen({
+            id: "LoadFile",
+            title: "上传文件",
+            url: "/FileManage/FileListTable/LoadFile",
+            width: "750px",
+            height: "250px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+
+            },
+            btn: null,
+        });
+        $.currentWindow().$("#gridList").trigger("reloadGrid");
+    }
+    function download(keyValue) {
+
+        $.ajax({
+            url: "/FileManage/FileListTable/download",
+            data: { keyValue: keyValue },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                window.location.href = data;
+            }
+        });
+    }
+    //function onlineview(keyValue) {
+        
+    //    $.ajax({
+    //        url: "/FileManage/FileListTable/onlinetohtml",
+    //        data: { keyValue: keyValue },           
+    //        dataType: "json",
+    //        async: false,
+    //        success: function (data) {
+    //            console.log(data);
+    //            //Window.Open(data.url);
+    //            //获得窗口的垂直位置
+    //            var iWidth = 1400;
+    //            var iHeight = 800;
+    //            var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
+    //            //获得窗口的水平位置
+    //            var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
+    //            window.open(data.str, '_blank', 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
+    //        }
+    //    });
+    //}
+
+
+    function btn_delete() {
+        $.deleteForm({
+            url: "/FileManage/FileListTable/DeleteForm",
+            param: { keyValue: $("#gridList").jqGridRowValue().F_Id },
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+    //function btn_add() {
+    //    var itemId = $("#itemTree").getCurrentNode().id;
+    //    var itemName = $("#itemTree").getCurrentNode().text;
+    //    if (!itemId) {
+    //        return false;
+    //    }
+    //    $.modalOpen({
+    //        id: "Form",
+    //        title: itemName + " 》新增异常",
+    //        url: "/ExceptionManage/ExceptionPackage/Form?itemId=" + itemId,
+    //        width: "100%",
+    //        height: "100%",
+    //        callBack: function (iframeId) {
+    //            top.frames[iframeId].submitForm();
+    //        },
+    //    });
+    //}
+    //function btn_edit() {
+    //    var itemName = $("#itemTree").getCurrentNode().text;
+    //    var keyValue = $("#gridList").jqGridRowValue().F_Id;
+    //    $.modalOpen({
+    //        id: "Form",
+    //        title: itemName + " 》修改异常",
+    //        url: "/ExceptionManage/ExceptionPackage/Form?keyValue=" + keyValue,
+    //        width: "100%",
+    //        height: "100%",
+    //        callBack: function (iframeId) {
+    //            top.frames[iframeId].submitForm();
+    //        }
+    //    });
+    //}
+    //function btn_delete() {
+    //    $.deleteForm({
+    //        url: "/ExceptionManage/ExceptionPackage/DeleteForm",
+    //        param: { keyValue: $("#gridList").jqGridRowValue().F_Id },
+    //        success: function () {
+    //            $("#gridList").resetSelection();
+    //            $("#gridList").trigger("reloadGrid");
+    //        }
+    //    })
+    //}
+    //function btn_details() {
+    //    var keyValue = $("#gridList").jqGridRowValue().F_Id;
+    //    $.modalOpen({
+    //        id: "Details",
+    //        title: "查看异常详情",
+    //        url: "/ExceptionManage/ExceptionPackage/Details?keyValue=" + keyValue,
+    //        width: "100%",
+    //        height: "100%",
+    //        //maxmin: false,
+    //        //btn: null,
+    //    });
+    //}
+    //function btn_details_href(f_id) {
+    //    $.modalOpen({
+    //        id: "ContentDetails",
+    //        title: "查看异常详情",
+    //        url: "/ExceptionManage/ExceptionPackage/ContentDetails?keyValue=" + f_id,
+    //        width: "100%",
+    //        height: "100%",
+    //        btn: null,
+    //        //maxmin:false,
+    //        //fix: true,
+    //    });
+
+    //}
+
+    //function btn_itemstype() {
+    //    $.modalOpen({
+    //        id: "ItemsType",
+    //        title: "区域分类",
+    //        url: "/ExceptionManage/ExceptionType/Index",
+    //        width: "800px",
+    //        height: "550px",
+    //        maxmin: false,
+    //        btn: null,
+    //    });
+    //}
+</script>
+@*<iframe src='https://view.officeapps.live.com/op/view.aspx?src=http://192.168.99.159:9999' width='100%' height='100%' frameborder='1'>
+    </iframe>*@
+<div class="ui-layout" id="layout" style="height: 100%; width: 100%;">
+    <div class="ui-layout-west">
+        <div id="itemTree"></div>
+    </div>
+
+    <div class="ui-layout-center">
+
+        <div class="topPanel">
+            <div class="btn-group" style="padding-left:10px">
+                <div class="layui-btn-container">
+                    <button type="button" class="btn btn-primary layui-btn demoMore" id="test8" onclick="upload()">文件上传</button>
+                </div>
+            </div>
+            <div class="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+                </div>
+                <div class="btn-group">
+                    <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>新建</a>
+                </div>
+                <div class="operate">
+                    <ul class="nav nav-pills">
+                        <li class="first">已选中<span>1</span>项</li>
+
+                        <li><a id="NF-delete" authorize="yes" onclick="btn_delete()"><i class="fa fa-trash-o"></i>删除</a></li>
+                    </ul>
+                    <a href="javascript:;" class="close"></a>
+                </div>
+                <script>$('.toolbar').authorizeButton()</script>
+            </div>
+
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要搜索关键字" style="width: 200px;">
+                                <span class="input-group-btn">
+                                    <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="gridPanel">
+            <table id="gridList"></table>
+        </div>
+    </div>
+
+</div>
+<div id="gridPager"></div>

@@ -1,0 +1,147 @@
+﻿using EMS.Application.LogManage;
+using EMS.Code;
+using EMS.Domain.Entity.ShiftManage;
+using EMS.Domain.IRepository.ShiftManage;
+using EMS.Repository.ShiftManage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EMS.Application.ShiftManage
+{
+    public class ShiftTableApp
+    {
+        IShiftTableRepository service = new ShiftTableRepository();
+        public List<ShiftTableEntity> getTeamJson(string val)
+        {
+            List<ShiftTableEntity> data = new List<ShiftTableEntity>();
+            if (!string.IsNullOrEmpty(val)) {
+                 data = service.IQueryable(t => t.F_Department == "IT部门"&&t.F_Team == val).OrderBy(t => t.F_Team).ToList();
+            }
+            else
+            {
+                var expression = ExtLinq.True<ShiftTableEntity>();
+                 data = service.IQueryable(t => t.F_Department == "IT部门").OrderBy(t => t.F_CreatorTime).ToList();
+            }
+             
+            return data;
+        }
+        public List<ShiftTableEntity> getListITJson(Pagination pagination, string queryJson)
+        {
+            var data = service.IQueryable(t => t.F_Department == "IT部门").OrderBy(t => t.F_Team).ToList();
+            var queryParam = queryJson.ToJObject();
+            if (!queryParam["keyword"].IsEmpty())
+            {
+                string keyword = queryParam["keyword"].ToString();
+                data = service.IQueryable(t => t.F_Department == "IT部门" && (t.F_Name.Contains(keyword) || t.F_Phone.Contains(keyword) || t.F_Team.Contains(keyword))).OrderByDescending(t => t.F_Team).ToList();
+            } 
+            return data;
+        }
+        public ShiftTableEntity GetForm(string keyValue)
+        {
+            return service.FindEntity(keyValue);
+        }
+
+        public void SubmitForm(ShiftTableEntity shiftTableEntity, string keyValue)
+        {
+            shiftTableEntity.F_Department = "IT部门";
+            if (shiftTableEntity != null) {
+                switch (shiftTableEntity.F_Team) {
+                    case "设备联网组":
+                        shiftTableEntity.F_Backgroudcolor = "green";
+                        break;
+                    case "PWS&B2B组":
+                        shiftTableEntity.F_Backgroudcolor = "red";
+                        break;
+                    case "网络维护组":
+                        shiftTableEntity.F_Backgroudcolor = "blue";
+                        break;
+                    default:
+                        shiftTableEntity.F_Backgroudcolor = "#FF1493";
+                        break;
+                }
+            }  
+            if (!string.IsNullOrEmpty(keyValue))
+            {
+                ShiftTableEntity oldEntity = service.FindEntity(t => t.F_Id == keyValue);
+                new OperationLogApp().IsUpdate(oldEntity, shiftTableEntity, keyValue);
+                shiftTableEntity.Modify(keyValue);
+            }
+            else
+            {
+                shiftTableEntity.Create();
+            }
+            service.SubmitForm(shiftTableEntity, keyValue);
+        }
+
+        public void DeleteForm(string keyValue)
+        {
+            service.Delete(t => t.F_Id == keyValue);
+        }
+        //====================================================================
+        public void Submitzz1Form(ShiftTableEntity shiftTableEntity, string keyValue)
+        {
+            shiftTableEntity.F_Department = "制造一部";
+            if (shiftTableEntity != null)
+            {
+                switch (shiftTableEntity.F_Team)
+                {
+                    case "减划组":
+                        shiftTableEntity.F_Backgroudcolor = "green";
+                        break;
+                    case "上芯组":
+                        shiftTableEntity.F_Backgroudcolor = "red";
+                        break;
+                    case "压焊组":
+                        shiftTableEntity.F_Backgroudcolor = "blue";
+                        break;
+                    case "切割组":
+                        shiftTableEntity.F_Backgroudcolor = "#DCDFE6";
+                        break;
+                    default:
+                        shiftTableEntity.F_Backgroudcolor = "#FF1493";
+                        break;
+                }
+            }
+            if (!string.IsNullOrEmpty(keyValue))
+            {
+                ShiftTableEntity oldEntity = service.FindEntity(t => t.F_Id == keyValue);
+                new OperationLogApp().IsUpdate(oldEntity, shiftTableEntity, keyValue);
+                shiftTableEntity.Modify(keyValue);
+            }
+            else
+            {
+                shiftTableEntity.Create();
+            }
+            service.SubmitForm(shiftTableEntity, keyValue);
+        }
+        public List<ShiftTableEntity> getListzz1Json(Pagination pagination, string queryJson)
+        {            
+            var data = service.IQueryable(t => t.F_Department == "制造一部").OrderBy(t =>t.F_Team).ToList();
+            var queryParam = queryJson.ToJObject();
+            if (!queryParam["keyword"].IsEmpty())
+            {
+                string keyword = queryParam["keyword"].ToString();
+                data = service.IQueryable(t => t.F_Department == "制造一部" && (t.F_Name.Contains(keyword) || t.F_Phone.Contains(keyword) || t.F_Team.Contains(keyword))).OrderByDescending(t => t.F_Team).ToList();
+            }
+            return data;
+        }
+        public List<ShiftTableEntity> getTeamZZ1Json(string val)
+        {
+            List<ShiftTableEntity> data = new List<ShiftTableEntity>();
+            if (!string.IsNullOrEmpty(val))
+            {
+                data = service.IQueryable(t => t.F_Department == "制造一部"&& t.F_Team == val).OrderBy(t => t.F_CreatorTime).ToList();
+            }
+            else
+            {
+                var expression = ExtLinq.True<ShiftTableEntity>();
+                data = service.IQueryable(t => t.F_Department == "制造一部").OrderBy(t => t.F_CreatorTime).ToList();
+            }
+
+            return data;
+        }
+    }
+}
